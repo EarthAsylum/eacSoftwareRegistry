@@ -17,6 +17,7 @@ Contributors:		[kevinburkholder](https://profiles.wordpress.org/kevinburkholder)
 License: 			EarthAsylum Consulting Proprietary License - {eac}PLv1  
 License URI:		https://swregistry.earthasylum.com/end-user-license-agreement/  
 Tags:				software registration, software registry, software license, license manager, registration API  
+GitHub URI:			https://github.com/EarthAsylum/eacSoftwareRegistry  
 </samp></details>
 
 **_{eac}SoftwareRegistry - A feature-rich and easily customized software registration and licensing server for WordPress._**
