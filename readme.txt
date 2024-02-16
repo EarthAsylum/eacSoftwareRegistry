@@ -375,28 +375,28 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 == Screenshots ==
 
 1. {eac}SoftwareRegistry General Settings
-![{eac}SoftwareRegistry General Settings](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-1.png)
+![{eac}SoftwareRegistry General Settings](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-1.png)
 
 2. {eac}SoftwareRegistry Tools
-![{eac}SoftwareRegistry Tools](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-2.png)
+![{eac}SoftwareRegistry Tools](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-2.png)
 
 3. {eac}SoftwareRegistry Distribution
-![{eac}SoftwareRegistry Distribution](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-3.png)
+![{eac}SoftwareRegistry Distribution](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-3.png)
 
 4. {eac}SoftwareRegistry Hooks
-![{eac}SoftwareRegistry Hooks](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-4.png)
+![{eac}SoftwareRegistry Hooks](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-4.png)
 
 5. {eac}SoftwareRegistry Woocommerce
-![{eac}SoftwareRegistry Woocommerce](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-5.png)
+![{eac}SoftwareRegistry Woocommerce](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-5.png)
 
 6. {eac}SoftwareRegistry Registration
-![{eac}SoftwareRegistry Registration](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-6.png)
+![{eac}SoftwareRegistry Registration](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-6.png)
 
 7. {eac}SoftwareRegistry Add New Registration
-![{eac}SoftwareRegistry Add New Registration](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-7.png)
+![{eac}SoftwareRegistry Add New Registration](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-7.png)
 
 8. {eac}SoftwareRegistry All Registration
-![{eac}SoftwareRegistry All Registrations](https://d2xk802d4616wu.cloudfront.net/eacSoftwareRegistry/assets/screenshot-8.png)
+![{eac}SoftwareRegistry All Registrations](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry/assets/screenshot-8.png)
 
 
 == Other Notes ==

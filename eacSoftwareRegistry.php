@@ -19,7 +19,7 @@
  * Tested up to: 		6.4
  * Requires PHP:		7.2
  * Plugin URI:			https://swregistry.earthasylum.com/
- * Update URI: 			https://swregistry.earthasylum.com/software-updates/eacSoftwareRegistry.json
+ * Update URI: 			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.json
  * Author:				EarthAsylum Consulting
  * Author URI:			http://www.earthasylum.com
  * License: 			EarthAsylum Consulting Proprietary License - {eac}PLv1
