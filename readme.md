@@ -8,7 +8,7 @@
 Plugin URI:         https://swregistry.earthasylum.com/  
 Author: 			[EarthAsylum Consulting](https://www.earthasylum.com)  
 Stable tag: 		1.3.2  
-Last Updated: 		15-Feb-2024  
+Last Updated: 		18-Feb-2024  
 Requires at least: 	5.5.0  
 Tested up to: 		6.4  
 Requires EAC: 		2.3  
@@ -419,5 +419,10 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 +	[{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/)
 +	[{eac}SoftwareRegistry WebHooks for WooCommerce](https://swregistry.earthasylum.com/webhooks-for-woocommerce/)
 +	[{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
+
+
+## Upgrade Notice
+
+Requires {eac}Doojigger version 2.5+
 
 

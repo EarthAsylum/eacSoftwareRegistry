@@ -79,9 +79,9 @@ namespace // global scope
 	defined( 'ABSPATH' ) or exit;
 
 	/**
-	 * Run the plugin loader - only for php files
+	 * Run the plugin loader - only for php files?
 	 */
- 	\EarthAsylumConsulting\eacSoftwareRegistry::loadPlugin(true);
+ 	\EarthAsylumConsulting\eacSoftwareRegistry::loadPlugin(false);
 
 	/**
 	 * Load registration extension
