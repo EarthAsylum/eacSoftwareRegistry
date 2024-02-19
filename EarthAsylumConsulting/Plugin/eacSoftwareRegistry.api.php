@@ -35,6 +35,20 @@ trait eacSoftwareRegistry_api
 	 */
 	protected function api_construct(array $header)
 	{
+		/**
+		 * filter {classname}_get_registration.
+		 * get a registration mata value array (registry_*)
+		 * @param	string registration key
+		 * @param	array select parameters
+		 * @return	array registration
+		 */
+		$this->add_filter('get_registration', function($registration,$metaQuery=[])
+			{
+				$post = $this->getRegistrationPostByKey($registration,true,$metaQuery);
+				return (is_wp_error($post)) ? $post : $this->getRegistrationMeta($post);
+			}
+		);
+
 		add_action( 'rest_api_init', array($this, 'api_register_routes') );
 	}
 

@@ -12,7 +12,7 @@ Last Updated: 		18-Feb-2024
 Requires at least: 	5.5.0  
 Tested up to: 		6.4  
 Requires EAC: 		2.3  
-Requires PHP: 		7.2  
+Requires PHP: 		7.4  
 Contributors:		[kevinburkholder](https://profiles.wordpress.org/kevinburkholder)  
 License: 			EarthAsylum Consulting Proprietary License - {eac}PLv1  
 License URI:		https://swregistry.earthasylum.com/end-user-license-agreement/  
