@@ -1,17 +1,17 @@
 === {eac}SoftwareRegistry Software Registration Server ===
-Plugin URI:         https://swregistry.earthasylum.com/
-Author: 			[EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag: 		1.3.2
-Last Updated: 		18-Feb-2024
-Requires at least: 	5.5.0
-Tested up to: 		6.4
-Requires EAC: 		2.3
-Requires PHP: 		7.4
-Contributors:		kevinburkholder
-License: 			EarthAsylum Consulting Proprietary License - {eac}PLv1
-License URI:		https://swregistry.earthasylum.com/end-user-license-agreement/
-Tags:				software registration, software registry, software license, license manager, registration API
-GitHub URI:			https://github.com/EarthAsylum/eacSoftwareRegistry
+Plugin URI:             https://swregistry.earthasylum.com/
+Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
+Stable tag:             1.3.2
+Last Updated:           18-Feb-2024
+Requires at least:      5.5.0
+Tested up to:           6.4
+Requires EAC:           2.3
+Requires PHP:           7.4
+Contributors:           earthasylum@github,kevinburkholder@wordpress
+License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
+License URI:            https://swregistry.earthasylum.com/end-user-license-agreement/
+Tags:                   software registration, software registry, software license, license manager, registration API
+GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry
 
 {eac}SoftwareRegistry - A feature-rich and easily customized software registration and licensing server for WordPress.
 
@@ -28,36 +28,36 @@ to manage the registration.
 
 One of two scenarios typically occur when a client receives your software:
 
-1.	The client purchases your software, registers your software, then installs your software.
+1.  The client purchases your software, registers your software, then installs your software.
 
-	With {eac}SoftwareRegistry, a new registration key may be created through the purchase process
-	(or manually by the administrator) and then the client may enter the registration key
-	and activate the registration when installing the software.
+    With {eac}SoftwareRegistry, a new registration key may be created through the purchase process
+    (or manually by the administrator) and then the client may enter the registration key
+    and activate the registration when installing the software.
 
-2.	The client downloads your software, installs your software, and then registers your software.
+2.  The client downloads your software, installs your software, and then registers your software.
 
-	The client is presented with a "new registration" screen when installing the software and may request
-	a new registration key through the API which will automatically generate the key and activated the registration.
+    The client is presented with a "new registration" screen when installing the software and may request
+    a new registration key through the API which will automatically generate the key and activated the registration.
 
 Registration keys may be verified via API on a scheduled basis so that any updates made by the administrator, via
 other transaction, or due to renewal or expiration, are updated in the client software.
 
 Registration status may be:
 
-+	Pending (awaiting approval)
-+	Trial (limited time trial period)
-+	Active
-+	Inactive
-+	Expired
-+	Terminated
++   Pending (awaiting approval)
++   Trial (limited time trial period)
++   Active
++   Inactive
++   Expired
++   Terminated
 
 Registrations may include (but do not require):
 
-+	Number of users/sites/devices.
-+	License level (i.e. 'basic', 'pro').
-+	Valid domain(s).
-+	Valid site URL(s).
-+	Software product-specific options and variations.
++   Number of users/sites/devices.
++   License level (i.e. 'basic', 'pro').
++   Valid domain(s).
++   Valid site URL(s).
++   Software product-specific options and variations.
 
 
 = {eac}SoftwareRegistry Administration =
@@ -74,7 +74,7 @@ See the [API Details](#api-details) section.
 
 Several extension plugins are available for {eac}SoftwareRegistry making it a complete and custom solution for your software registration needs. These extension plugins are *free* to all {eac}SoftwareRegistry users. Simply choose the extensions you need for your licensing and registration server.
 
-*	**{eac}SoftwareRegistry Distribution SDK**
+*   **{eac}SoftwareRegistry Distribution SDK**
 
 The added [{eac}SoftwareRegistry Software Distribution Development Kit (SDK)](https://swregistry.earthasylum.com/software-registry-sdk/) extension makes it even easier to implement software registrations in your software package.
 
@@ -86,19 +86,19 @@ It also includes the storing of the registration key, the caching of the registr
 Both WordPress and non-WordPress projects are supported by the SDK.
 
 
-*	**{eac}SoftwareRegistry Software Taxonomy**
+*   **{eac}SoftwareRegistry Software Taxonomy**
 
 The [{eac}SoftwareRegistry Software Taxonomy](https://swregistry.earthasylum.com/software-taxonomy/) extension
 is a simple plugin extension that allows you to set and override {eac}SoftwareRegistry options for specific software products. It both defines the software product as well as the server parameters used when that product is registered via your software registration api. Additionally, you may customize client emails and notifications as well as license-level restrictions.
 
-*	**{eac}SoftwareRegistry Custom Hooks**
+*   **{eac}SoftwareRegistry Custom Hooks**
 
 With the [{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/) extension,
 you can add custom PHP code for the many hooks (filters and actions) available in the server software.
 With these hooks you can customize the registry server options, incoming API requests, outgoing API responses, and client emails and notifications.
 
 
-*	**{eac}SoftwareRegistry and WooCommerce**
+*   **{eac}SoftwareRegistry and WooCommerce**
 
 With the added [{eac}SoftwareRegistry WebHooks for WooCommerce](https://swregistry.earthasylum.com/webhooks-for-woocommerce/)
 extension, software registrations can be created, updated, and/or terminated via [WebHooks](https://woocommerce.com/document/webhooks/) from WooCommerce.
@@ -110,7 +110,7 @@ When an order placed on your WooCommerce site is created, the registration will 
 Your WooCommerce and registration server do not need to be the same server and neither needs to be running the other software. In fact, you can have multiple WooCommerce sites all sending webhook updates to your registration server.
 
 
-*	**{eac}SoftwareRegistry Subscriptions for WooCommerce**
+*   **{eac}SoftwareRegistry Subscriptions for WooCommerce**
 
 Go one step further by adding the [{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
 plugin to your WooCommerce store site and subscription updates will also be passed to your registration server keeping your registrations updated by your WooCommerce subscription renewals.
@@ -150,95 +150,95 @@ API parameters are passed as an array:
 
 Example code to execute the remote request
 
-	/**
-	 * remote API request - builds request array and calls api_remote_request
-	 *
-	 * @param	string	$endpoint create, activate, deactivate, revise, verify
-	 * @param	array	$params api parameters
-	 * @return	object api response (decoded)
-	 */
-	public function registryApiRequest($endpoint,$params)
-	{
-		$endpoint = strtolower($endpoint);
-		switch ($endpoint)
-		{
-			case 'create':
-				$apiKey = "<Registration Creation Key>";
-				$method = 'PUT';
-				break;
-			case 'deactivate':
-				$apiKey = "<Registration Update Key>";
-				$method = 'DELETE';
-				break;
-			case 'verify':
-				$apiKey = "<Registration Read Key>";
-				$method = (count($params) > 1) ? 'POST' : 'GET';
-				break;
-			default:
-				$apiKey = $this->getApiUpdateKey();
-				$method = (count($params) > 1) ? 'POST' : 'GET';
-				break;
-		}
+    /**
+     * remote API request - builds request array and calls api_remote_request
+     *
+     * @param   string  $endpoint create, activate, deactivate, revise, verify
+     * @param   array   $params api parameters
+     * @return  object api response (decoded)
+     */
+    public function registryApiRequest($endpoint,$params)
+    {
+        $endpoint = strtolower($endpoint);
+        switch ($endpoint)
+        {
+            case 'create':
+                $apiKey = "<Registration Creation Key>";
+                $method = 'PUT';
+                break;
+            case 'deactivate':
+                $apiKey = "<Registration Update Key>";
+                $method = 'DELETE';
+                break;
+            case 'verify':
+                $apiKey = "<Registration Read Key>";
+                $method = (count($params) > 1) ? 'POST' : 'GET';
+                break;
+            default:
+                $apiKey = $this->getApiUpdateKey();
+                $method = (count($params) > 1) ? 'POST' : 'GET';
+                break;
+        }
 
-		$request = [
-			'method' 		=> $method,
-		];
+        $request = [
+            'method'        => $method,
+        ];
 
-		$request['headers']	= [
-			'Accept'		=> 'application/json',
-			'Referer'		=> 	sprintf('%s://%s%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']),
-			'Authorization'	=> 'Bearer '.base64_encode($apiKey),
-		];
-		if (in_array($method,['GET','HEAD','DELETE'])) {
-			$request['headers']['Content-Type'] = 'text/plain';
-			$remoteUrl = "<API Endpoint URL>".'/'.$endpoint .'?'. http_build_query($params);
-		} else {
-			$request['headers']['Content-Type'] = 'application/json';
-			$request['body'] = json_encode($params);
-			$remoteUrl = "<API Endpoint URL>".'/'.$endpoint;
-		}
+        $request['headers'] = [
+            'Accept'        => 'application/json',
+            'Referer'       =>  sprintf('%s://%s%s', isset($_SERVER['HTTPS']) ? 'https' : 'http', $_SERVER['HTTP_HOST'], $_SERVER['REQUEST_URI']),
+            'Authorization' => 'Bearer '.base64_encode($apiKey),
+        ];
+        if (in_array($method,['GET','HEAD','DELETE'])) {
+            $request['headers']['Content-Type'] = 'text/plain';
+            $remoteUrl = "<API Endpoint URL>".'/'.$endpoint .'?'. http_build_query($params);
+        } else {
+            $request['headers']['Content-Type'] = 'application/json';
+            $request['body'] = json_encode($params);
+            $remoteUrl = "<API Endpoint URL>".'/'.$endpoint;
+        }
 
-		$response =  $this->api_remote_request($endpoint,$remoteUrl,$request);
+        $response =  $this->api_remote_request($endpoint,$remoteUrl,$request);
 
-		if ($response->status->code == '200') && $endpoint != 'deactivate' && isset($response->registration))
-		{
-			// update the current registration cache (save the registration object and key)
-			$this->setRegistrationCache($response);
-			// schedule the next refresh event
-			$this->scheduleRegistryRefresh($response->registrar->refreshInterval,$response->registrar->refreshSchedule,$response->registration);
-		}
-		return $response;
-	}
+        if ($response->status->code == '200') && $endpoint != 'deactivate' && isset($response->registration))
+        {
+            // update the current registration cache (save the registration object and key)
+            $this->setRegistrationCache($response);
+            // schedule the next refresh event
+            $this->scheduleRegistryRefresh($response->registrar->refreshInterval,$response->registrar->refreshSchedule,$response->registration);
+        }
+        return $response;
+    }
 
 
-	/**
-	 * API remote request - remote http request (wp_remote_request or curl)
-	 *
-	 * @param	string	$endpoint create, activate, deactivate, verify
-	 * @param	string	$remoteUrl remote Url
-	 * @param	array 	$request api request
-	 * @return	object api response (decoded)
-	 */
-	public function api_remote_request($endpoint,$remoteUrl,$request)
-	{
-		$result = wp_remote_request($remoteUrl,$request);
-		$body 	= json_decode(wp_remote_retrieve_body($result));
-		if (!empty($body) && isset($body->code) && isset($body->message)) {
-			$result = new \wp_error($body->code,$body->message,$body->data);
-		}
+    /**
+     * API remote request - remote http request (wp_remote_request or curl)
+     *
+     * @param   string  $endpoint create, activate, deactivate, verify
+     * @param   string  $remoteUrl remote Url
+     * @param   array   $request api request
+     * @return  object api response (decoded)
+     */
+    public function api_remote_request($endpoint,$remoteUrl,$request)
+    {
+        $result = wp_remote_request($remoteUrl,$request);
+        $body   = json_decode(wp_remote_retrieve_body($result));
+        if (!empty($body) && isset($body->code) && isset($body->message)) {
+            $result = new \wp_error($body->code,$body->message,$body->data);
+        }
 
-		if (is_wp_error($result))
-		{
-			$code 	= $result->get_error_data() ?: [];
-			$code	= $code->status ?? $result->get_error_code();
-			$msg 	= $result->get_error_message();
-			$error 	= json_decode('{"status":{"code":"'.$code.'","message":"'.addslashes($msg).'"},'.
-								 '"error":{"code":"'.$code.'","message":"'.addslashes($msg).'"}}');
-			return $error;
-		}
+        if (is_wp_error($result))
+        {
+            $code   = $result->get_error_data() ?: [];
+            $code   = $code->status ?? $result->get_error_code();
+            $msg    = $result->get_error_message();
+            $error  = json_decode('{"status":{"code":"'.$code.'","message":"'.addslashes($msg).'"},'.
+                                 '"error":{"code":"'.$code.'","message":"'.addslashes($msg).'"}}');
+            return $error;
+        }
 
-		return $body;
-	}
+        return $body;
+    }
 
 = Using registryApiRequest() =
 
@@ -407,11 +407,11 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 
 = See Also =
 
-+	[Implementing the Software Registry SDK](https://swregistry.earthasylum.com/software-registry-sdk/)
-+	[{eac}SoftwareRegistry Software Taxonomy](https://swregistry.earthasylum.com/software-taxonomy/)
-+	[{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/)
-+	[{eac}SoftwareRegistry WebHooks for WooCommerce](https://swregistry.earthasylum.com/webhooks-for-woocommerce/)
-+	[{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
++   [Implementing the Software Registry SDK](https://swregistry.earthasylum.com/software-registry-sdk/)
++   [{eac}SoftwareRegistry Software Taxonomy](https://swregistry.earthasylum.com/software-taxonomy/)
++   [{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/)
++   [{eac}SoftwareRegistry WebHooks for WooCommerce](https://swregistry.earthasylum.com/webhooks-for-woocommerce/)
++   [{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
 
 
 == Upgrade Notice ==
@@ -425,12 +425,12 @@ Requires {eac}Doojigger version 2.5+
 
 __This is proprietary, copyrighted software.__
 
-+	Title to the Software will remain the exclusive intellectual property of *EarthAsylum Consulting*.
++   Title to the Software will remain the exclusive intellectual property of *EarthAsylum Consulting*.
 
-+	You, the customer, are granted a non-exclusive, non-transferable, license to access, install, and use
++   You, the customer, are granted a non-exclusive, non-transferable, license to access, install, and use
 this software in accordance with the license level purchased.
 
-+	You are not permitted to share, distribute, or make available this software to any third-party.
++   You are not permitted to share, distribute, or make available this software to any third-party.
 
 See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-license-agreement/)
 
@@ -439,97 +439,97 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 = Version 1.3.2 – February 18, 2024 =
 
-+	New 'eacSoftwareRegistry_get_registration' filter.
-	+	Returns registration meta or wp_error.
-+	Update for Github hosting.
-+	Allow loading for non-php request uri.
++   New 'eacSoftwareRegistry_get_registration' filter.
+    +   Returns registration meta or wp_error.
++   Update for Github hosting.
++   Allow loading for non-php request uri.
 
 = Version 1.3.1 – June 14, 2023 =
 
-+	Now USEs eacDoojigger html_input_fields trait.
-+	Updated for {eac}Doojigger 2.3, supporting backend-only traits.
-+	Fixed isRegistryValue in main class.
-+	Added "Registration" alias to registration extension.
++   Now USEs eacDoojigger html_input_fields trait.
++   Updated for {eac}Doojigger 2.3, supporting backend-only traits.
++   Fixed isRegistryValue in main class.
++   Added "Registration" alias to registration extension.
 
 = Version 1.3.0 – May 9, 2023 =
 
-+	Fixed registration activation/deactivation issues, re: status/post_status.
-+	Removed global license limitations, moved to separate software_taxonomy extension.
-+	Added 'refresh' end-point, like 'revise', client & server exchange any updated info.
-+	Refactored main plugin and api methods.
-+	Fixed registration api error messaging.
-+	Updated (filters) for eacsoftwareregistry-software-taxonomy
-	+ 	New 'registry_api_defaults' filter for create/activate/revise.
-	+	New 'registrar_+' filters for registrar options.
-	+	New client message filters and macro substitution.
-+	Added option export/import & tools tab.
-+	Tested with WordPress 6.2 and {eac}Doojigger 2.2 (required).
++   Fixed registration activation/deactivation issues, re: status/post_status.
++   Removed global license limitations, moved to separate software_taxonomy extension.
++   Added 'refresh' end-point, like 'revise', client & server exchange any updated info.
++   Refactored main plugin and api methods.
++   Fixed registration api error messaging.
++   Updated (filters) for eacsoftwareregistry-software-taxonomy
+    +   New 'registry_api_defaults' filter for create/activate/revise.
+    +   New 'registrar_+' filters for registrar options.
+    +   New client message filters and macro substitution.
++   Added option export/import & tools tab.
++   Tested with WordPress 6.2 and {eac}Doojigger 2.2 (required).
 
 = Version 1.2.0 – November 20, 2022 =
 
-+	Updated for WordPress 6.1 and {eac}Doojigger 2.0.
-+	Improved auto-updater (through {eac}Doojigger).
-+	Added contextual help.
-+	Updated registration code.
-+	Updated {eac}SoftwareRegistry distribution kit.
++   Updated for WordPress 6.1 and {eac}Doojigger 2.0.
++   Improved auto-updater (through {eac}Doojigger).
++   Added contextual help.
++   Updated registration code.
++   Updated {eac}SoftwareRegistry distribution kit.
 
 = Version 1.1.0 – September 21, 2022 =
 
-+	Added settings_refresh_intervals filter.
-+	Enhanced environment check on load.
-+	Improved registry value sanitization.
-+	Added new 'registry_title' value for short title (i.e. plugin name)
-+	Added filter to exclude 'softwareregistry' comments from WP comment query.
-+	Disable title field in custom post editor.
-+	Moved license limitations to new extension.
-+	Changed tab 'License Limitations' to 'License Limits'.
-+	Information updates to the distribution tab.
-+	Client and admin email can be styled in dashboard Additional Custom CSS
-	+	body class = 'eacSoftwareRegistry-email'
-	+	registration table class = 'eacSoftwareRegistry-table
++   Added settings_refresh_intervals filter.
++   Enhanced environment check on load.
++   Improved registry value sanitization.
++   Added new 'registry_title' value for short title (i.e. plugin name)
++   Added filter to exclude 'softwareregistry' comments from WP comment query.
++   Disable title field in custom post editor.
++   Moved license limitations to new extension.
++   Changed tab 'License Limitations' to 'License Limits'.
++   Information updates to the distribution tab.
++   Client and admin email can be styled in dashboard Additional Custom CSS
+    +   body class = 'eacSoftwareRegistry-email'
+    +   registration table class = 'eacSoftwareRegistry-table
 
 = Version 1.0.8 – August 26, 2022 =
 
-+	Only add actions when is_admin() (not on front-end).
-+	Updated for {eac}Doojigger 1.2
-+	Standardized settings link url with $this->getSettingsLink().
-+	Standardized documentation link url with $this->getDocumentationLink().
++   Only add actions when is_admin() (not on front-end).
++   Updated for {eac}Doojigger 1.2
++   Standardized settings link url with $this->getSettingsLink().
++   Standardized documentation link url with $this->getDocumentationLink().
 
 = Version 1.0.7 – August 5, 2022 =
 
-+	Updated documentation and directory structure.
-+	Support eacSoftwareRegistry Custom Hooks v2
++   Updated documentation and directory structure.
++   Support eacSoftwareRegistry Custom Hooks v2
 
 = Version 1.0.6 – July 29, 2022 =
 
-+	Updated filter used in custom hooks.
++   Updated filter used in custom hooks.
 
 = Version 1.0.5 – July 15, 2022 =
 
-+	Updated registration extension.
++   Updated registration extension.
 
 = Version 1.0.4 – June 15, 2022 =
 
-+	Updated "License limitations" by license level.
++   Updated "License limitations" by license level.
 
 = Version 1.0.3 – May 22, 2022 =
 
-+	Updated customer email message, include Additional Custom CSS.
-+	Added notices to customer email.
-+	Added registry_timezone (client timezone).
++   Updated customer email message, include Additional Custom CSS.
++   Added notices to customer email.
++   Added registry_timezone (client timezone).
 
 = Version 1.0.2 – May 17, 2022 =
 
-+	Added "License limitations" by license level.
-+	Tweaked transaction id validation & display.
-+	Fixed column sorting in "All Registrations".
-+	Proper parsing/removal of 'www.' domain prefix.
++   Added "License limitations" by license level.
++   Tweaked transaction id validation & display.
++   Fixed column sorting in "All Registrations".
++   Proper parsing/removal of 'www.' domain prefix.
 
 = Version 1.0.1 – Apr 19, 2022 =
 
-+	Enhanced support for webhooks and subscriptions.
-+	Rewrite/condense API field validation.
++   Enhanced support for webhooks and subscriptions.
++   Rewrite/condense API field validation.
 
 = Version 1.0.0 – Mar 29, 2022 =
 
-+	After months... Initial stable release.
++   After months... Initial stable release.
