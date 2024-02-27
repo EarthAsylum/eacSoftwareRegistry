@@ -1,8 +1,9 @@
 ## {eac}SoftwareRegistry Software Registration Server  
 [![EarthAsylum Consulting](https://img.shields.io/badge/EarthAsylum-Consulting-0?&labelColor=6e9882&color=707070)](https://earthasylum.com/)
 [![WordPress](https://img.shields.io/badge/WordPress-Plugins-grey?logo=wordpress&labelColor=blue)](https://wordpress.org/plugins/search/EarthAsylum/)
-[![eacDoojigger](https://img.shields.io/badge/Requires-{eac}Doojigger-da821d)](https://eacDoojigger.earthasylum.com/)
-<details><summary>Plugin Header</summary><samp>
+[![eacDoojigger](https://img.shields.io/badge/Requires-%7Beac%7DDoojigger-da821d)](https://eacDoojigger.earthasylum.com/)
+
+<details><summary>Plugin Header</summary>
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
@@ -18,9 +19,9 @@ License URI:            https://swregistry.earthasylum.com/end-user-license-agre
 Tags:                   software registration, software registry, software license, license manager, registration API  
 GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry  
 
-</samp></details>
+</details>
 
-{eac}SoftwareRegistry - A feature-rich and easily customized software registration and licensing server for WordPress.
+> {eac}SoftwareRegistry - A feature-rich and easily customized software registration and licensing server for WordPress.
 
 ### Description
 
