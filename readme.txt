@@ -441,7 +441,7 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 +   Allow existing inactive or terminated registration when creating new registration.
 +   Fixed non-admin (webhook) post update actions.
-+   Compatibile with WordPress 6.5.
++   Compatible with WordPress 6.5.
 
 = Version 1.3.2 – February 18, 2024 =
 
