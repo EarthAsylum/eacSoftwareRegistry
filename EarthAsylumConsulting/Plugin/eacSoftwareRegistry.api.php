@@ -1487,6 +1487,10 @@ trait eacSoftwareRegistry_api
 			{
 				return $this->rest_410_error("registration terminated");
 			}
+			if ($this->api_action == 'create' && $post->post_status == 'private')
+			{
+				return $this->rest_410_error("registration inactive");
+			}
 			if ($includeMeta) {
 				$post->meta_input = $this->getPostMetaValues($post->ID);
 			}

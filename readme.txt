@@ -1,10 +1,10 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.3.2
-Last Updated:           18-Feb-2024
+Stable tag:             1.3.3
+Last Updated:           04-Apr-2024
 Requires at least:      5.5.0
-Tested up to:           6.4
+Tested up to:           6.5
 Requires EAC:           2.3
 Requires PHP:           7.4
 Contributors:           earthasylum@github,kevinburkholder@wordpress
@@ -436,6 +436,12 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.3.3 – April 4, 2024 =
+
++   Allow existing inactive or terminated registration when creating new registration.
++   Fixed non-admin (webhook) post update actions.
++   Compatibile with WordPress 6.5.
 
 = Version 1.3.2 – February 18, 2024 =
 

@@ -14,9 +14,9 @@
  * @wordpress-plugin
  * Plugin Name:			{eac}SoftwareRegistry
  * Description:			Software Registration Server - A feature-rich and easily customized software registration and licensing server for WordPress.
- * Version:				1.3.2
+ * Version:				1.3.3
  * Requires at least:	5.5.0
- * Tested up to: 		6.4
+ * Tested up to: 		6.5
  * Requires PHP:		7.2
  * Plugin URI:			https://swregistry.earthasylum.com/
  * Update URI: 			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.json
@@ -36,9 +36,8 @@ namespace EarthAsylumConsulting
 	{
 		\add_action( 'all_admin_notices', function()
 			{
-				echo '<div class="notice notice-error is-dismissible">'.
-					 '<h4>{eac}SoftwareRegistry requires installation & activation of <em>{eac}Doojigger</em>.</h4>'.
-					 '</div>';
+			echo '<div class="notice notice-error is-dismissible"><p>{eac}SoftwareRegistry requires installation & activation of '.
+				 '<a href="https://eacdoojigger.earthasylum.com/eacdoojigger" target="_blank">{eac}Doojigger</a>.</p></div>';
 			}
 		);
 		return;

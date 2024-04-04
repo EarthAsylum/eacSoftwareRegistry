@@ -7,7 +7,7 @@
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2023 EarthAsylum Consulting <www.earthasylum.com>
+ * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
  * @version		1.x
  */
 
@@ -298,6 +298,11 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	{
 		parent::addActionsAndFilters();
 
+		// when updating custom post via edit, api, or  webhook
+		add_action( 'pre_post_update', 					array($this, 'pre_update_custom_post'), 10,2 );
+
+		add_action( 'save_post_'.self::CUSTOM_POST_TYPE,array($this, 'update_custom_post'), 10,3 );
+
 		/*
 		 * Only on admin/dashboard
 		 */
@@ -348,11 +353,6 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 														array($this,'order_custom_post_metabox'));
 			}
 		});
-
-		// when updating custom post via edit, api, or  webhook
-		add_action( 'pre_post_update', 					array($this, 'pre_update_custom_post'), 10,2 );
-
-		add_action( 'save_post_'.self::CUSTOM_POST_TYPE,array($this, 'update_custom_post'), 10,3 );
 
 		// add documentation link on plugins page
 		add_filter( (is_network_admin() ? 'network_admin_' : '').'plugin_action_links_' . $this->PLUGIN_SLUG,
