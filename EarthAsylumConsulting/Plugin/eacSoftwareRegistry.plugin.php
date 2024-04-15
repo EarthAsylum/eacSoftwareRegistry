@@ -1,4 +1,6 @@
 <?php
+namespace EarthAsylumConsulting\Plugin;
+
 /**
  * EarthAsylum Consulting {eac} Software Registration Server
  *
@@ -8,18 +10,18 @@
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		1.x
+ * @version		24.0415.1
  */
 
-namespace EarthAsylumConsulting\Plugin;
-include('eacSoftwareRegistry.api.php');
+require "eacSoftwareRegistry.trait.php";
+require "eacSoftwareRegistry.api.php";
 
 class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 {
 	/**
-	 * @trait methods for html fields used externally
+	 * @trait methods for administration
 	 */
-	use \EarthAsylumConsulting\Traits\html_input_fields;
+	use \EarthAsylumConsulting\Plugin\eacSoftwareRegistry_administration;
 
 	/**
 	 * @trait methods for api
@@ -30,11 +32,6 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 * @trait methods for date/time
 	 */
 	use \EarthAsylumConsulting\Traits\datetime;
-
-	/**
-	 * @trait methods for contextual help tabs
-	 */
- 	use \EarthAsylumConsulting\Traits\plugin_help;
 
 	/**
 	 * @var string our custom post type
@@ -206,24 +203,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 
 		if ($this->is_admin())
 		{
-			$this->defaultTabs = ['general','tools'];
-
-			register_activation_hook($header['PluginFile'],		'flush_rewrite_rules' );
-			register_deactivation_hook($header['PluginFile'],	'flush_rewrite_rules' );
-
-			// add settings menu to custom post type menu
-			add_action( 'admin_menu',					array($this, 'admin_add_settings_menu') );
-
-			// used by optionExport in standard_options trait
-			add_action( "admin_post_{$this->pluginName}_settings_export",
-														array($this, 'stdOptions_post_optionExport') );
-			// When this plugin is updated
-			$this->add_action( 'version_updated', 		array($this, 'admin_plugin_updated'), 10, 2 );
-
-			// Register plugin options
-			$this->add_action( 'options_settings_page', array($this, 'admin_options_settings'),1 );
-			// Add contextual help
-			$this->add_action( 'options_settings_help', array($this, 'admin_options_help'), 10, 0 );
+			$this->admin_construct($header);
 		}
 
 		$this->api_construct($header);
@@ -303,313 +283,11 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 
 		add_action( 'save_post_'.self::CUSTOM_POST_TYPE,array($this, 'update_custom_post'), 10,3 );
 
-		/*
-		 * Only on admin/dashboard
-		 */
-		if (!is_admin()) return;
-
-		// when on our custom post page list or add/edit...
-		add_action( 'current_screen', function($currentScreen)
+		// only on admin/dashboard
+		if ($this->is_admin())
 		{
-			if (!$this->isSettingsPage() && strpos($currentScreen->id, self::CUSTOM_POST_TYPE) !== false)
-			{
-				$this->admin_options_help('Software Registry');
-				$this->plugin_help_render($currentScreen);
-
-				// add css & js
-				add_action( 'admin_enqueue_scripts', 	array($this, 'add_inline_scripts') );
-
-				// define columns for custom post type 'All Registrations' list
-				add_filter( 'manage_'.self::CUSTOM_POST_TYPE.'_posts_columns',
-														array($this, 'custom_post_columns'), 10, 2);
-
-				add_action( 'manage_'.self::CUSTOM_POST_TYPE.'_posts_custom_column',
-														array($this, 'custom_post_column_value'), 99, 2);
-
-				add_filter( 'manage_edit-'.self::CUSTOM_POST_TYPE.'_sortable_columns',
-														array($this, 'custom_post_sortable_columns') );
-
-				add_action( 'pre_get_posts', 			array($this, 'custom_post_sorting_columns') );
-
-				add_filter( 'post_row_actions', 		array($this, 'custom_post_column_actions'), 10, 2 );
-
-				// filter post status in list display
-				add_filter( 'display_post_states', 		function($post_states, $post)
-					{
-						if ( $post->post_type == self::CUSTOM_POST_TYPE )
-						{
-							if (array_key_exists('protected', $post_states)) {
-								unset($post_states['protected']); // = '<span class="dashicons dashicons-lock"></span>';
-							}
-						}
-						return $post_states;
-					}, 10, 2);
-
-				// when updating custom post in 'Add/Edit Registration'
-				add_filter( 'default_title', 			array($this, 'set_post_registry_key'), 10, 2);
-
-				// set order/location of meta-boxes in 'Add/Edit Registration'
-				add_filter( 'get_user_option_meta-box-order_'.self::CUSTOM_POST_TYPE,
-														array($this,'order_custom_post_metabox'));
-			}
-		});
-
-		// add documentation link on plugins page
-		add_filter( (is_network_admin() ? 'network_admin_' : '').'plugin_action_links_' . $this->PLUGIN_SLUG,
-			function($pluginLinks, $pluginFile, $pluginData)
-			{
-				return array_merge(
-					['documentation'=>$this->getDocumentationLink($pluginData)],
-					$pluginLinks
-				);
-			},20,3
-		);
-
-		//so we can upload our software packages
-		if (current_user_can('manage_options'))
-		{
-			add_filter('upload_mimes', function($types)
-				{
-					$types['zip'] = 'application/zip';
-					$types['gz'] = 'application/x-gzip';
-					return $types;
-				}
-			);
+			$this->admin_addActionsAndFilters();
 		}
-	}
-
-
-	/**
-	 * register options on options_settings_page
-	 *
-	 * @access public
-	 * @return void
-	 */
-	public function admin_options_settings()
-	{
-		// format the h1 title, add documentation link buttons
-
-		$this->add_filter("options_form_h1_html", function($h1)
-			{
-				return 	"<div id='settings_banner'>".
-						$this->formatPluginHelp($h1).
-						"<div id='settings_info'>".
-
-						$this->getDocumentationLink(true,'/software-registration-server',"<span class='dashicons dashicons-editor-help button eac-green'></span>").
-						"&nbsp;&nbsp;&nbsp;".
-
-						"<a href='".network_admin_url('/plugin-install.php?s=earthasylum&tab=search&type=term')."' title='Plugins from EarthAsylum Consulting'>".
-						"<span class='dashicons dashicons-admin-plugins button eac-green'></span></a>".
-						"&nbsp;&nbsp;&nbsp;".
-
-						"<a href='https://earthasylum.com' title='About EarthAsylum Consulting'>".
-						"<span class='dashicons dashicons-admin-site-alt3 button eac-green'></span></a>".
-
-						"</div></div>";
-			}
-		);
-
-		if (is_multisite())
-		{
-			$this->registerNetworkOptions('software_registration_server',
-				[
-					'_display'				=> array(
-						'type'		=> 	'display',
-						'label'		=> 	'Network/MultiSite',
-						'default'	=>	'This plugin is not intended to be activated or used by the network administrator.',
-					),
-				]
-			);
-		}
-
-		$this->registerPluginOptions('registrar_contact',
-			[
-				'registrar_email'			=> array(
-						'type'		=> 	'email',
-						'label'		=> 	'Registrar Admin Email',
-						'default'	=>	get_bloginfo('admin_email'),
-						'info'		=> 	'Send administrator notifications of registration updates to this address.'
-				),
-				'registrar_name'			=> array(
-						'type'		=> 	'text',
-						'label'		=> 	'Registrar Name',
-						'default'	=>	get_bloginfo('name'),
-						'info'		=>	'When sending client email, send from this name.',
-				),
-				'registrar_phone'			=> array(
-						'type'		=> 	'tel',
-						'label'		=> 	'Registrar Telephone',
-						'info'		=> 	'Include telephone in client notifications.',
-				),
-				'registrar_contact'			=> array(
-						'type'		=> 	'email',
-						'label'		=> 	'Registrar Support Email',
-						'default'	=>	wp_get_current_user()->user_email,
-						'info'		=> 	'Include support email in client notifications -and- send client email from this address.'
-				),
-				'registrar_web'				=> array(
-						'type'		=> 	'url',
-						'label'		=> 	'Registrar Web Address',
-						'default'	=>	home_url(),
-						'info'		=> 	'Include web address in client notifications.',
-				),
-			]
-		);
-
-		$this->registerPluginOptions('registration_defaults',
-			[
-				'registrar_timezone'		=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Registry Server Timezone',
-						'options'	=>	$this->apply_filters( 'settings_timezones',
-											array_unique(['UTC',wp_timezone_string()])
-										),
-						'default'	=>	'UTC',
-						'info'		=> 	'The timezone used for registration times.'
-				),
-				'registrar_status'			=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Default Status',
-						'options'	=>	$this->REGISTRY_STATUS_CODES,
-						'default'	=>	'pending',
-						'info'		=> 	'The default status to assign to newly created registrations.'
-				),
-				'registrar_term'			=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Default Initial Term',
-						'options'	=>	$this->REGISTRY_INITIAL_TERMS,
-						'default'	=>	'30 days',
-						'info'		=> 	"The initial term when creating a new registration (pending or trial)."
-				),
-				'registrar_fullterm'		=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Default Full Term',
-						'options'	=>	$this->REGISTRY_FULL_TERMS,
-						'default'	=>	'1 year',
-						'info'		=> 	"The full term when activating a registration."
-				),
-				'registrar_license'			=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Default License',
-						'options'	=>	$this->REGISTRY_LICENSE_LEVEL,
-						'default'	=>	'L3',
-						'info'		=> 	'The default license level to assign to newly created registrations.'
-				),
-			]
-		);
-
-		$this->registerPluginOptions('registration_options',
-			[
-				'registrar_cache_time'		=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Default Cache Time',
-						'options'	=>	[
-											'1 Day'		=> DAY_IN_SECONDS,
-											'2 Days'	=> 2 * DAY_IN_SECONDS,
-											'1 Week'	=> WEEK_IN_SECONDS,
-											'2 Weeks'	=> 2 * WEEK_IN_SECONDS,
-											'1 Month'	=> MONTH_IN_SECONDS,
-										],
-						'default'	=>	WEEK_IN_SECONDS,
-						'info'		=> 	"Length of time that the client registrant <em>should</em> store/cache the registration."
-				),
-				'registrar_pending_time'	=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Pending Refresh Time',
-						'options'	=>	$this->REGISTRY_REFRESH_INTERVALS,
-						'default'	=>	$this->REGISTRY_REFRESH_INTERVALS['Hourly'],
-						'info'		=> 	"How often the client registrant <em>should</em> refresh (re-validate) the registration when status is 'pending'.".
-										"<br/><small>Must be less than cache time</small>"
-				),
-				'registrar_refresh_time'	=> array(
-						'type'		=> 	'select',
-						'label'		=> 	'Default Refresh Time',
-						'options'	=>	$this->REGISTRY_REFRESH_INTERVALS,
-						'default'	=>	$this->REGISTRY_REFRESH_INTERVALS['Daily'],
-						'info'		=> 	"How often the client registrant <em>should</em> refresh (re-validate) the registration when status is 'active'.".
-										"<br/><small>Must be less than cache time</small>"
-				),
-				'registrar_options'			=> array(
-						'type'		=> 	'checkbox',
-						'label'		=> 	'Allow API To ...',
-						'options'	=>	[
-											['Set registration key'	=> 'allow_set_key'],
-											['Set initial status'	=> 'allow_set_status'],
-											['Set effective date'	=> 'allow_set_effective'],
-											['Set expiration date'	=> 'allow_set_expiration'],
-											['Update on Activation'	=> 'allow_activation_update'],
-										],
-						'info'		=> 	'Allow API requests to pass and set values normally set by the registration server.',
-						'style'		=>	'display: block;',
-				),
-				'registrar_endpoints'		=> array(
-						'type'		=> 	'checkbox',
-						'label'		=> 	'Allow API Endpoints',
-						'options'	=>	[
-											['Create New Registration'			=> 'create'],
-											['Activate Existing Registration'	=> 'activate'],
-											['Deactivate Existing Registration'	=> 'deactivate'],
-											['Verify Current Registration'		=> 'verify'],
-											['Refresh Current Registration'		=> 'refresh'],
-											['Revise Current Registration'		=> 'revise'],
-										],
-						'default'	=> 	['create','activate','deactivate','verify','refresh','revise'],
-						'info'		=> 	'Enable end-points to allow access via the Application Program Interface (API).',
-						'style'		=>	'display: block;',
-				),
-			]
-		);
-
-		// from standard_options trait - now in tools extension
-		//$this->registerPluginOptions('plugin_options',$this->standard_options(['backupOptions','restoreOptions','optionExport','optionImport']));
-	}
-
-
-	/**
-	 * Add help tab on admin page
-	 *
-	 * @return	void
-	 */
- 	public function admin_options_help($tab='General')
-	{
-		ob_start();
-		?>
-			{eac}SoftwareRegistry is a WordPress software licensing and registration server with an easy to use API
-			for creating, activating, deactivating, and verifying software registration keys.
-
-			Registration keys may be created and updated through the administrator pages in WordPress,
-			but the system is far more complete when your software package implements the {eac}SoftwareRegistry API to manage the registration.
-
-			The built-in Application Program Interface (API) is a relatively simple method for your software package to communicate with your software registration server.
-		<?php
-		$content = ob_get_clean();
-
-		$this->addPluginHelpTab($tab,$content,'About');
-
-		ob_start();
-		?>
-			Should you need help using or customizing {eac}SoftwareRegistry, please review this help content and read our online
-			<a href='https://swregistry.earthasylum.com/software-registration-server/' target='_blank'>documentation</a>. If necessary,
-			email us with your questions, problems, or bug reports at <a href='mailto:support@earthasylum.com'>support@earthasylum.com</a>.
-
-			We recommend checking your <a href='site-health.php'>Site Health</a> report occasionally, especially when problems arise.
-		<?php
-		$content = ob_get_clean();
-
-		$this->addPluginHelpTab($tab,$content,['Getting Help','open']);
-
-		$this->addPluginSidebarText('<h4>For more information:</h4>');
-
-		$this->addPluginSidebarLink(
-			"<span class='dashicons dashicons-info-outline eac-green'></span>About This Plugin",
-			"/wp-admin/plugin-install.php?tab=plugin-information&plugin=eacSoftwareRegistry&TB_iframe=true&width=600&height=550",
-			$this->getPluginValue('Title')." Plugin Information Page"
-		);
-		$this->addPluginSidebarLink(
-			"<span class='dashicons dashicons-rest-api eac-green'></span>API Details",
-			$this->getDocumentationURL(true,'/software-registration-server/#api-details'),
-			"Application Program Interface"
-		);
 	}
 
 
@@ -630,50 +308,6 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	}
 
 
-	/**
-	 * custom style and script
-	 *
-	 * @return void
-	 */
-	public function add_inline_scripts()
-	{
-		$this->plugin->html_input_style();
-
-		ob_start();
-		?>
-			*::placeholder {text-align: right;}
-			#minor-publishing {display: none;}
-			#local-storage-notice {display: none !important;}
-			.settings-grid-item {padding: .5em 0;}
-			.column-title {width: 23%;}
-			.column-comments {width: 3em !important;}
-			.column-registry_email {width: 20%;}
-			.column-registry_product {width: 15%;}
-			.column-registry_transid {width: 4em;}
-			.column-registry_status {width: 6.5em;}
-		<?php
-		$style = ob_get_clean();
-		$styleId = self::CUSTOM_POST_TYPE.'-style';
-		wp_register_style( $styleId, false );
-		wp_enqueue_style( $styleId );
-		wp_add_inline_style( $styleId, $style );
-
-		ob_start();
-		?>
-			document.addEventListener('DOMContentLoaded', function()
-				{
-					document.getElementById('title').setAttribute('disabled','disabled');
-				}
-			);
-		<?php
-		$script = ob_get_clean();
-		$scriptId = self::CUSTOM_POST_TYPE.'-script';
-		wp_register_script( $scriptId, false );
-		wp_enqueue_script( $scriptId );
-		wp_add_inline_script( $scriptId, $this->minifyString($script) );
-	}
-
-
 	/*
 	 *
 	 * Software Registration Methods
@@ -689,9 +323,8 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 */
 	private function getRegistrationMeta(\WP_Post $post)
 	{
-		$meta = array('registry_key'=>'');
 		// maintain standard key order
-		foreach(array_keys(self::REGISTRY_DEFAULTS) as $name) $meta[$name] = null;
+		$meta = array_fill_keys(array_keys(self::REGISTRY_DEFAULTS), null);
 
 		$postmeta = (isset($post->meta_input)) ? $post->meta_input : $this->getPostMetaValues($post->ID);
 
@@ -1171,7 +804,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 * @param 	string	$message	message html
 	 * @param 	array	$registration	registration meta
 	 * @param 	string 	$apiAction	One of 'create', 'activate', 'revise', 'deactivate', 'verify' or 'update' (non-api)
-	 *  @param 	string	$default 	original/default message
+	 * @param 	string	$default 	original/default message
 	 * @return 	void
 	 */
 	private function clientMessageMerge($message, $registration, $apiAction=null, $default='')
@@ -1224,8 +857,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			], $meta, $post);
 			if (!$headers) return;
 
-			$style = $this->apply_filters('client_email_style', $this->getEmailStyle('client'), $meta, $post);
-			if (empty($style)) return;
+			$stylesheet = $this->apply_filters('client_email_style', $this->getEmailStyle('client'), $meta, $post);
 
 			if ($sName 	= $registrar['registrar_name']) {
 				$eName	= str_replace(' ','%20',$sName);
@@ -1246,6 +878,13 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 				ltrim($sPhone."\n").
 				ltrim($sWeb."\n")
 			);
+
+			$notices = '';
+			foreach  ($this->getRegistrationNotices($meta,$post) as $type=>$notice) {
+				if  (!empty($notice)) {
+					$notices  .= "<p class='notice notice-{$type}'>{$notice}</p>";
+				}
+			}
 
 			// no 'client_email_message' unless manually entered
 			$default =	$this->get_option('client_email_message',
@@ -1268,32 +907,33 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 				$context,
 				$default
 			);
-			if (empty($message)) return;
 
-			$notices = '';
-			foreach  ($this->getRegistrationNotices($meta,$post) as $type=>$notice) {
-				if  (!empty($notice)) {
-					$notices  .= "<p class='notice notice-{$type}'>{$notice}</p>";
-				}
+			// no 'client_email_footer' unless manually entered
+			$default =	$this->get_option('client_email_footer','');
+
+			/**
+			 * filter {classname}_client_email_footer
+			 *
+			 * @param	string message
+			 * @param	array registration
+			 * @param	object wp_post
+			 */
+			$footer = $this->clientMessageMerge(
+				$this->apply_filters('client_email_footer', $default, $meta, $post),
+				$meta,
+				$context,
+				$default
+			);
+
+			$registration = $post->post_content;
+
+			$template_name = 'customer-notification-email.php';
+			ob_start();
+			if ( ! $template_path = locate_template("eacSoftwareRegistry/templates/{$template_name}") ) {
+				$template_path = $this->plugin->pluginHeader('PluginDir')."/templates/{$template_name}";
 			}
-
-			$content =
-				"<!DOCTYPE html>".
-				"<head>".
-				"<link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>".
-				"<style type='text/css' media='all'>{$style}</style>".
-				"</head>".
-				"<body marginwidth='0' topmargin='0' marginheight='0' class='".self::CUSTOM_POST_TYPE."-email'>".
-				"<div class='container'>".
-				"{$message}".
-				"<address>{$signature}</address>".
-				"</div>".
-				"<hr>".
-				"<p>Registration Details:</p>".
-				"<div class='notices'>{$notices}</div>".
-				"<div class='registry'>{$post->post_content}</div>";
-				"</body>".
-				"</html>";
+			require $template_path;
+			$content = ob_get_clean();
 
 			$_headers = [];
 			foreach ($headers as $name=>$value) {
@@ -1326,9 +966,10 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			], $meta, $post);
 			if (!$headers) return;
 
-			$style = $this->apply_filters('admin_email_style', $this->getEmailStyle('admin'), $meta, $post);
-			if (empty($style)) return;
+			$stylesheet = rtrim($this->apply_filters('admin_email_style', $this->getEmailStyle('admin'), $meta, $post));
+			$stylesheet.= "\n.eac-gray {color: #707070;} .eac-green {color: #6e9882;} .eac-orange {color: #da821d;}\n";
 
+			$editPostURL = admin_url("/post.php?post={$post->ID}&action=edit");
 			// no 'admin_email_message' unless manually entered
 			$default =	$this->get_option('admin_email_message',
 				"<p>To: Software Registrar,</p>".
@@ -1349,26 +990,21 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 				$context,
 				$default
 			);
-			if (!$message) return;
 
-			$content =
-				"<!DOCTYPE html>".
-				"<head><style type='text/css' media='all'>{$style}</style></head>".
-				"<body marginwidth='0' topmargin='0' marginheight='0' class='".self::CUSTOM_POST_TYPE."-email'>".
-				"<div class='container'>".
-				"{$message}".
-				"</div>".
-				"<hr>".
-				"<p>Registration Details:</p>".
-				"<div class='registry'>{$post->post_content}</div>".
-				"<p>{$source} Via {$this->api_source}</p>";
-				"<p>{$emailSent}</p>";
-				"<footer style='padding-top: 5em;'>".
-				"	<p><a href='".home_url()."'/>".$this->plugin->getPluginValue('Title')."</a><br/>".
-				"	<a href='".$this->plugin->getPluginValue('AuthorURI')."'/>".$this->plugin->getPluginValue('Author')."</a></p>".
-				"<footer>".
-				"</body>".
-				"</html>";
+			$registration 	= $post->post_content;
+			$api_source 	= $this->api_source;
+			$footer 		=
+				"<a href='".$this->plugin->pluginHeader('PluginURI')."'/>".$this->formatPluginHelp($this->plugin->pluginHeader('Title'))."</a> &copy; ".
+				"<a href='".$this->plugin->pluginHeader('AuthorURI')."'/>".$this->plugin->pluginHeader('Author')."</a>".
+				"<div class='eac-gray'>Business Software Development & Information Technology Management</div>";
+
+			$template_name 	= 'administrator-notification-email.php';
+			ob_start();
+			if ( ! $template_path = locate_template("eacSoftwareRegistry/templates/{$template_name}") ) {
+				$template_path = $this->plugin->pluginHeader('PluginDir')."/templates/{$template_name}";
+			}
+			require $template_path;
+			$content = ob_get_clean();
 
 			$_headers = [];
 			foreach ($headers as $name=>$value) {
@@ -1387,37 +1023,18 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 */
 	public function getEmailStyle($context='client')
 	{
-		$bg        = get_option( 'woocommerce_email_background_color', 'var(--eac-email-bg)' );
-		$body      = get_option( 'woocommerce_email_body_background_color', 'var(--eac-email-body)' );
-		$base      = get_option( 'woocommerce_email_base_color', 'var(--eac-email-base)' );
-		$text      = get_option( 'woocommerce_email_text_color', 'var(--eac-email-text)' );
-
-		$style =
-			"* {font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif; font-size: 14px; color: $text;}".
-			"body 	{width: 80%; max-width: 640px; margin: .5em auto; background-color: $bg; padding: 2em; line-height: 1.5;}".
-			"code 	{color: $base; font-weight: 700; letter-spacing: 1px;}".
-			"var 	{color: $base;}".
-			".container {".
-			"	background-color: $body; padding: .5em".
-			"}".
-			".registry {".
-			"	background-color: $body;".
-			"	margin: 1em auto; padding: 5px;".
-			"	border-radius: 4px; border: 1px solid #ccc; border-left: 10px solid $base; border-right: 10px solid $base;".
-			"}".
-			".registry table, .registry td, .registry td em {".
-			"	font-family: Consolas,Monaco,'Andale Mono','Ubuntu Mono',monospace; color: #3c3c3c;".
-			"	border: none; text-align: left;".
-			"}".
-			".icon {font-family: 'Material Icons'; display: inline-block; vertical-align: middle; width: 3em;}".
-			".notice {font-style: italic;}".
-			"address, address a[href] {color: $base; font-weight: 400;}".
-			"\n";
+		$template_name 	= 'notification-email-css.php';
+		ob_start();
+		if ( ! $template_path = locate_template("eacSoftwareRegistry/templates/{$template_name}") ) {
+			$template_path = $this->plugin->pluginHeader('PluginDir')."/templates/{$template_name}";
+		}
+		require $template_path;
+		$stylesheet = ob_get_clean();
 
 		// allow for customization from Appearance->Customize->Additional CSS
 		$css = wp_get_custom_css();
-		if ($css) $style .= $css;
-		return $style;
+		if ($css) $stylesheet .= $css;
+		return $stylesheet;
 	}
 
 
@@ -1473,7 +1090,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			'capability_type'		=> 'post',
 			'show_in_rest'			=> false,
 			'register_meta_box_cb'	=> array($this,'custom_post_metabox'),
-		//	'query_var'				=> true,
+			'query_var'				=> self::CUSTOM_POST_TYPE,
 		//	'rewrite' 				=> array( 'slug' => self::CUSTOM_POST_TYPE.'/%registry_key%' ),
 
 		);
@@ -1481,466 +1098,6 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 		// Registering the Custom Post Type
 		\register_post_type( self::CUSTOM_POST_TYPE, $args );
 	}
-
-
-	/**
-	 * Custom columns in the 'All Registrations' list
-	 */
-	public function custom_post_columns($columns,$cpt=null)
-	{
-		unset( $columns['author'] );
-		unset( $columns['date'] );
-		return array_merge($columns,
-			[
-				'title' 			=> __('Registry Key', 'eacSoftwareRegistry'),
-			//	'date' 				=> __('Last Updated', 'eacSoftwareRegistry'),
-				'registry_email' 	=> __('EMail', 'eacSoftwareRegistry'),
-				'registry_product' 	=> __('Product', 'eacSoftwareRegistry'),
-				'registry_transid' 	=> '<span class="dashicons dashicons-external" title="External Transaction"></span>',// __('Trans', 'eacSoftwareRegistry'),
-			//	'registry_license' 	=> __('License', 'eacSoftwareRegistry'),
-				'registry_status' 	=> __('Status', 'eacSoftwareRegistry'),
-				'registry_effective'=> __('Effective', 'eacSoftwareRegistry'),
-				'registry_expires' 	=> __('Expires', 'eacSoftwareRegistry'),
-			],
-		);
-	}
-
-
-	/**
-	 * Custom actions in the 'All Registrations' list
-	 *
-	 * @param array	 	$actions 	array of actions.
-	 * @param object 	$post 		post object.
-	 * @return array
-	 */
-	public function custom_post_column_actions( $actions, $post )
-	{
-		if ( $post->post_type == self::CUSTOM_POST_TYPE )
-		{
-			if (array_key_exists('inline hide-if-no-js', $actions)) {
-				unset($actions['inline hide-if-no-js']); // quick edit
-			}
-			if (array_key_exists('trash', $actions)) {
-				$actions['trash'] = preg_replace('/>Trash</','>Deactivate<',$actions['trash']);
-			}
-			$actions = array_merge(['postid'=>'<span>ID: '.$post->ID.'</span>'],$actions);
-		}
-		return $actions;
-	}
-
-
-	/**
-	 * Custom values in the 'All Registrations' list
-	 */
-	public function custom_post_column_value($column, $post_id)
-	{
-		switch ($column)
-		{
-			case 'registry_product':
-				$value = get_post_meta($post_id, "_registry_license", true);
-				echo '<span title="'.get_post_meta($post_id, "_registry_description", true).'">'.
-					get_post_meta($post_id, "_{$column}", true).' ('.
-					str_replace(' ','&nbsp;',(array_search($value,$this->REGISTRY_LICENSE_LEVEL) ?: $value)).')'.
-					'</span>';
-				break;
-			case 'registry_email':
-			//	$name 	= ltrim(get_post_meta($post_id, "_registry_name", true)."\n");
-			//	$company = ltrim(get_post_meta($post_id, "_registry_company", true)."\n");
-			//	$email 	= ltrim(get_post_meta($post_id, "_{$column}", true)."\n");
-			//	$phone 	= get_post_meta($post_id, "_registry_phone", true);
-				$excerpt = get_post($post_id)->post_excerpt;
-				echo "<span title='{$excerpt}'>".get_post_meta($post_id, "_{$column}", true);
-				$value = get_post_meta($post_id, "_registry_company", true) ?: get_post_meta($post_id, "_registry_name", true);
-				echo ' ('.str_replace(' ','&nbsp;',$value).')</span>';
-				break;
-		//	case 'registry_license':
-		//		$value = get_post_meta($post_id, "_{$column}", true);
-		//		echo array_search($value,$this->REGISTRY_LICENSE_LEVEL) ?: $value;
-		//		break;
-			case 'registry_transid':
-				$value = get_post_meta($post_id, "_{$column}", true);
-		//		$short = ($value) ? preg_replace('/^(.*):(\d+)(:.*)?$/i','$2',$value) : '';
-				$short  = current(explode('|',$value));
-				echo "<span title='".str_replace("|","\n",$value)."'>{$short}</span>";
-				break;
-			case 'registry_status':
-				$value = get_post_meta($post_id, "_{$column}", true);
-				echo array_search($value,$this->REGISTRY_STATUS_CODES) ?: $value;
-				break;
-			case 'registry_effective':
-				echo $this->getDateTimeInZone( get_post_meta($post_id, "_{$column}", true) )->format('d-M-Y');
-				break;
-			case 'registry_expires':
-				$next = get_post_meta($post_id, "_registry_nextpay", true);
-				$next = ($next) ? 'Next Payment: '.$this->getDateTimeInZone($next)->format('d-M-Y') : '';
-				echo "<span title='{$next}'>".$this->getDateTimeInZone( get_post_meta($post_id, "_{$column}", true) )->format('d-M-Y')."</span>";
-				break;
-			default:
-				echo get_post_meta($post_id, "_{$column}", true);
-		}
-	}
-
-
-	/**
-	 * Custom sortable columns in the 'All Registrations' list
-	 */
-	public function custom_post_sortable_columns($columns)
-	{
-		$columns['registry_email'] 		= 'registry_email';
-		$columns['registry_product'] 	= 'registry_product';
-	//	$columns['registry_license'] 	= 'registry_license';
-		$columns['registry_transid'] 	= 'registry_transid';
-		$columns['registry_status'] 	= 'registry_status';
-		$columns['registry_effective'] 	= 'registry_effective';
-		$columns['registry_expires'] 	= 'registry_expires';
-		return $columns;
-	}
-
-
-	/**
-	 * Custom sorting in the 'All Registrations' list
-	 */
-	public function custom_post_sorting_columns($query)
-	{
-		$orderby = $query->get( 'orderby' );
-
-		switch($orderby)
-		{
-			case 'registry_email':
-			case 'registry_product':
-			case 'registry_transid':
-			case 'registry_status':
-				$query->set( 'meta_key', "_{$orderby}" );
-				$query->set( 'meta_type', 'CHAR' );
-				$query->set( 'orderby', 'meta_value' );
-				break;
-			case 'registry_effective':
-			case 'registry_expires':
-				$query->set( 'meta_key', "_{$orderby}" );
-				$query->set( 'meta_type', 'DATE' );
-				$query->set( 'orderby', 'meta_value' );
-				break;
-			default:
-				break;
-		}
-	}
-
-
-	/**
-	 * Add custom meta box(es)
-	 */
-	public function custom_post_metabox()
-	{
-		add_meta_box(
-			self::CUSTOM_POST_TYPE.'_fields',		// Unique ID
-			esc_html__( 'Registration Details', 'eacSoftwareRegistry' ),    // Title
-			[$this,'custom_post_metabox_fields'],	// Callback function
-			self::CUSTOM_POST_TYPE, 				// Admin page (or post type)
-			'normal',								// Context normal, side, advanced
-			'high'									// Priority 'high', 'core', 'default', or 'low'
-		);
-
-		add_meta_box(
-			self::CUSTOM_POST_TYPE.'_status',		// Unique ID
-			esc_html__( 'Registration Status', 'eacSoftwareRegistry' ),    // Title
-			[$this,'custom_post_metabox_status'],	// Callback function
-			self::CUSTOM_POST_TYPE, 				// Admin page (or post type)
-			self::CUSTOM_POST_TYPE.'-metabox',		// Context normal, side, advanced
-			'high'									// Priority 'high', 'core', 'default', or 'low'
-		);
-
-		add_meta_box(
-			self::CUSTOM_POST_TYPE.'_payment',		// Unique ID
-			esc_html__( 'Registration Payment', 'eacSoftwareRegistry' ),    // Title
-			[$this,'custom_post_metabox_payment'],	// Callback function
-			self::CUSTOM_POST_TYPE, 				// Admin page (or post type)
-			self::CUSTOM_POST_TYPE.'-metabox',		// Context normal, side, advanced
-			'high'									// Priority 'high', 'core', 'default', or 'low'
-		);
-
-		remove_meta_box('commentsdiv',self::CUSTOM_POST_TYPE,'normal');
-		add_meta_box(
-			'commentsdiv',
-			esc_html__( 'Registration Notes', 'eacSoftwareRegistry' ),
-			'post_comment_meta_box',				// Callback function
-			self::CUSTOM_POST_TYPE, 				// Admin page (or post type)
-			'normal',								// Context normal, side, advanced
-			'high'									// Priority 'high', 'core', 'default', or 'low'
-		);
-
-		remove_meta_box('commentstatusdiv',self::CUSTOM_POST_TYPE,'normal');
-		remove_meta_box('slugdiv',self::CUSTOM_POST_TYPE,'normal');
-	}
-
-
-	/**
-	 * Add custom meta box(es) status box
-	 */
-	public function custom_post_metabox_status($post)
-	{
-		$fields = array(
-			'registry_status'		=> [
-				'type'		=>	'select',
-				'label'		=>	__('Status','eacSoftwareRegistry'),
-				'default'	=>	$this->get_option('registrar_status'),
-				'options'	=>	array_filter($this->REGISTRY_STATUS_CODES,function($v){return $v!='terminated';}),
-				'info'		=>	'<small>change may alter dates</small>',
-				'help'		=> false,
-			],
-			'registry_effective'	=> [
-				'type'		=>	'date',
-				'label'		=>	__('Effective','eacSoftwareRegistry'),
-				'default'	=>	$this->getDateTimeInZone('now')->format('Y-m-d'),
-				'attributes'=>	['required=true']
-			],
-			'registry_expires'		=> [
-				'type'		=>	'date',
-				'label'		=>	__('Expires','eacSoftwareRegistry'),
-				'default'	=>	$this->getDateTimeInZone('now','+'.$this->get_option('registrar_term'))->format('Y-m-d'),
-				'attributes'=>	['required=true']
-			],
-			'email_to_client'		=> [
-				'type'		=>	'button',
-				'label'		=>	'<span class="dashicons dashicons-email-alt"></span>',
-				'default'	=>	'Update &amp; Send to Client'
-			],
-		);
-
-		echo "<div class='settings-grid-container' style='grid-template-columns: 5.5em auto;'>\n";
-		$this->add_metabox_fields($fields,$post,12);
-		echo "</div>";
-  	}
-
-
-	/**
-	 * Add custom meta box(es) payment box
-	 */
-	public function custom_post_metabox_payment($post)
-	{
-		$fields = array(
-			'registry_paydue'		=> [
-				'type'		=>	'number',
-				'label'		=>	__('Amount Due','eacSoftwareRegistry'),
-				'attributes'=>	['min=0.00','step=.01','max=9999999.99']
-			],
-			'registry_payamount'	=> [
-				'type'		=>	'number',
-				'label'		=>	__('Amount Paid','eacSoftwareRegistry'),
-				'attributes'=>	['min=0.00','step=.01','max=9999999.99']
-			],
-			'registry_paydate'		=> [
-				'type'		=>	'date',
-				'label'		=>	__('Payment Date','eacSoftwareRegistry')
-			],
-			'registry_payid'		=> [
-				'type'		=>	'text',
-				'label'		=>	__('Payment Id/#','eacSoftwareRegistry')
-			],
-			'registry_nextpay'		=> [
-				'type'		=> 	'date',
-				'label'		=>	__('Next Payment','eacSoftwareRegistry')
-			],
-		);
-
-		echo "<div class='settings-grid-container' style='grid-template-columns: 7.5em auto;'>\n";
-		$this->add_metabox_fields($fields,$post,12);
-		echo "</div>";
-  	}
-
-
-	/**
-	 * Add custom meta box(es) html
-	 */
-	public function custom_post_metabox_fields($post)
-	{
-		$fields = array(
-		//	'registry_help'			=> [
-		//		'type'		=>	'help',
-		//		'label'		=>	'<strong>Registration Details</strong>',
-		//		'help'		=>	'<hr>'
-		//	],
-			'registry_key'			=> [
-				'type'		=>	'hidden',
-				'default'	=>	$post->post_title
-			],
-			'registry_product'		=> [
-				'type'		=>	'text',
-				'label'		=>	__('Registered Product Id','eacSoftwareRegistry'),
-				'info'		=>	__('Registered product Id (alpha-numeric)','eacSoftwareRegistry'),
-				'attributes'=>	['required=required',"pattern='[a-zA-Z0-9_\\x7f-\\xff]*'"]
-			],
-			'registry_title'		=> [
-				'type'		=>	'text',
-				'label'		=>	__('Registered Product Name','eacSoftwareRegistry'),
-				'info'		=>	__('Short product name/title (text)','eacSoftwareRegistry'),
-				'attributes'=>	['required=required']
-			],
-			'registry_description'	=> [
-				'type'		=>	'textarea',
-				'label'		=>	__('Product Description','eacSoftwareRegistry'),
-				'info'		=>	__('Registered product description','eacSoftwareRegistry')
-			],
-			'registry_version'		=> [
-				'type'		=>	'text',
-				'label'		=>	__('Product Version','eacSoftwareRegistry'),
-				'info'		=>	__('Registered product version','eacSoftwareRegistry')
-			],
-			'registry_license'		=> [
-				'type'		=>	'select',
-				'label'		=>	__('Product License','eacSoftwareRegistry'),
-				'default'	=>	$this->get_option('registrar_license'),
-				'options'	=>	$this->REGISTRY_LICENSE_LEVEL,
-				'info'		=>	__('Registered product license','eacSoftwareRegistry')
-			],
-			'registry_count'		=> [
-				'type'		=>	'number',
-				'label'		=>	__('License Count','eacSoftwareRegistry'),
-				'info'		=>	__('Number of licenses (users/seats/devices) included','eacSoftwareRegistry'),
-				'attributes'=>	["placeholder='unlimited'"]
-			],
-			'registry_name'			=> [
-				'type'		=>	'text',
-				'label'		=>	__('Registrant\'s Name','eacSoftwareRegistry'),
-				'info'		=>	__('Registrant\'s full name','eacSoftwareRegistry')
-			],
-			'registry_email'		=> [
-				'type'		=>	'email',
-				'label'		=>	__('Registrant\'s Email','eacSoftwareRegistry'),
-				'info'		=>	__('Registrant\'s email address','eacSoftwareRegistry'),
-				'attributes'=>	['required=required']
-			],
-			'registry_company'		=> [
-				'type'		=>	'text',
-				'label'		=>	__('Registrant\'s Organization','eacSoftwareRegistry'),
-				'info'		=>	__('Registrant\'s company/organization name','eacSoftwareRegistry')
-			],
-			'registry_address'		=> [
-				'type'		=>	'textarea',
-				'label'		=>	__('Registrant\'s Address','eacSoftwareRegistry'),
-				'info'		=>	__('Registrant\'s full postal address','eacSoftwareRegistry')
-			],
-			'registry_phone'		=> [
-				'type'		=>	'text',
-				'label'		=>	__('Registrant\'s Phone','eacSoftwareRegistry'),
-				'info'		=>	__('Registrant\'s telephone number','eacSoftwareRegistry')
-			],
-			'registry_variations'	=> [
-				'type'		=>	'textarea',
-				'label'		=>	__('Product Variation(s)','eacSoftwareRegistry'),
-				'info'		=>	__('List of [name=value] product variations (one per line)','eacSoftwareRegistry')
-			],
-			'registry_options'		=> [
-				'type'		=>	'textarea',
-				'label'		=>	__('Product Option(s)','eacSoftwareRegistry'),
-				'info'		=>	__('List of product options (one per line)','eacSoftwareRegistry')
-			],
-			'registry_domains'		=> [
-				'type'		=>	'textarea',
-				'label'		=>	__('Registered Domains','eacSoftwareRegistry'),
-				'info'		=>	__('List of registered domain names (one per line) <small>If empty, all domains are allowed</small>','eacSoftwareRegistry'),
-				'attributes'=>	["placeholder='allow any domain'"]
-			],
-			'registry_sites'		=> [
-				'type'		=>	'textarea',
-				'label'		=>	__('Registered Sites','eacSoftwareRegistry'),
-				'info'		=>	__('List of registered site URLs (one per line) <small>If empty, all URLs are allowed</small>','eacSoftwareRegistry'),
-				'attributes'=>	["placeholder='allow any site url'"]
-			],
-			'registry_transid'		=> [
-				'type'		=>	'readonly',
-				'label'		=>	__('Transaction ID','eacSoftwareRegistry'),
-				'info'		=>	__('External order transaction','eacSoftwareRegistry')
-			],
-		);
-
-		// if software_taxonomy set "force" flag, and is active
-		if ($this->is_option('registrar_taxonomy_product') && defined('EAC_SOFTWARE_TAXONOMY'))
-		{
-			$options = [];
-			$terms = get_terms(
-				['taxonomy' => EAC_SOFTWARE_TAXONOMY, 'orderby' => 'name', 'hide_empty' => false]
-			);
-			foreach ($terms as $term)
-			{
-				$options[$term->slug] = $term->slug;
-			}
-			$fieldValue = sanitize_title( get_post_meta($post->ID,"_registry_product",true) );
-			$options[$fieldValue] = $fieldValue; // maybe registered before taxonomy added
-			$fields['registry_product']['type'] 	= 'select';
-			$fields['registry_product']['options'] 	= $options;
-			unset($fields['registry_title']['attributes']);
-		}
-
-		echo "<div class='settings-grid-container' style='grid-template-columns: 15em auto;'>\n";
-		$this->add_metabox_fields($fields,$post,50);
-		echo "</div>";
-  	}
-
-
-	/**
-	 * Add custom meta fields
-	 */
-	private function add_metabox_fields($fields,$post,$maxWidth=50)
-	{
-		foreach ($fields as $key => $fieldMeta)
-		{
-			$fieldValue = maybe_unserialize( get_post_meta($post->ID,"_{$key}",true) );
-			if (empty($fieldValue) && isset($fieldMeta['default']))
-			{
-				$fieldValue = $fieldMeta['default'];
-			}
-			if (is_array($fieldValue))
-			{
-				$fieldValue = json_decode(json_encode($fieldValue));
-				if (is_array($fieldValue)) {
-					$fieldValue = implode("\n",$fieldValue);
-				} else if (is_object($fieldValue)) {
-					$fieldValue = $this->implode_with_keys("\n",(array)$fieldValue);
-				}
-			}
-			if ($key == 'registry_product' && $fieldMeta['type'] == 'select')
-			{
-				$fieldValue = sanitize_title($fieldValue);
-			}
-			if (empty($fieldMeta['label']))
-			{
-				$fieldMeta['label'] = ucwords(str_replace('_',' ',$key));
-			}
-
-			$this->html_input_help('', $key, $fieldMeta);
-			echo $this->html_input_block("_{$key}", $fieldMeta, $fieldValue, $maxWidth);
-		}
-  	}
-
-
-	/**
-	 * Order (layout) meta boxes
-	 */
-	public function order_custom_post_metabox()
-	{
-		return array(
-			'normal'   => implode(',', [
-				self::CUSTOM_POST_TYPE.'_fields',
-				'postcustom',
-				'commentsdiv',
-			//	'postexcerpt',
-			//	'formatdiv',
-			//	'trackbacksdiv',
-			//	'postimagediv',
-			//	'commentstatusdiv',
-			//	'slugdiv',
-			//	'authordiv',
-			]),
-			'side'     => implode(',', [
-				'submitdiv',
-				self::CUSTOM_POST_TYPE.'_status',
-				self::CUSTOM_POST_TYPE.'_payment',
-			//	'tagsdiv-post_tag',
-			//	'categorydiv',
-			]),
-			'advanced' => '',
-		);
-  	}
 
 
 	/**
@@ -2032,23 +1189,6 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 
 
 	/**
-	 * Puts the settings page in the 'Software Registration' menu - on 'admin_menu' action
-	 *
-	 * @return	void
-	 */
-	public function admin_add_settings_menu(): void
-	{
-		add_submenu_page('edit.php?post_type='.self::CUSTOM_POST_TYPE,
-						 'Settings',
-						 'Settings',
-						 'manage_options',
-						 $this->getSettingsSlug(),
-						 $this->getSettingsCallback()
-		);
-	}
-
-
-	/**
 	 * set the client timezone
 	 *
 	 * @param array $meta curent registry array
@@ -2121,7 +1261,8 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 */
 	public function isStandardLicense(): bool
 	{
-	 	return $this->Registration->isRegistryValue('license', 'L3', 'ge');
+		return $this->Registration->isRegistryValue('license', 'L3', 'ge');
+	//	return $this->apply_filters('registry_value',false,'license', 'L3', 'ge');
 	}
 
 
@@ -2132,27 +1273,19 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 */
 	public function isProfessionalLicense(): bool
 	{
-	 	return $this->Registration->isRegistryValue('license', 'L4', 'ge');
+		return $this->Registration->isRegistryValue('license', 'L4', 'ge');
+	//	return $this->apply_filters('registry_value',false,'license', 'L4', 'ge');
 	}
 
 
-	/*
-	 *
-	 * When this plugin is updated
-	 *
-	 */
-
-
 	/**
-	 * version updated (action {classname}_version_updated)
+	 * is license L5 (enterprise) or better
 	 *
-	 * May be called more than once on a given site (once as network admin).
-	 *
-	 * @param	string|null	$curVersion currently installed version number
-	 * @param	string		$newVersion version being installed/updated
-	 * @return	void
+	 * @return	bool
 	 */
-	public function admin_plugin_updated($curVersion,$newVersion)
+	public function isEnterpriseLicense(): bool
 	{
+		return $this->Registration->isRegistryValue('license', 'L5', 'ge');
+	//	return $this->apply_filters('registry_value',false,'license', 'L5', 'ge');
 	}
 }

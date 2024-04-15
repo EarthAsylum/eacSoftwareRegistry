@@ -7,11 +7,11 @@
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
-Stable tag:             1.3.3  
-Last Updated:           04-Apr-2024  
-Requires at least:      5.5.0  
+Stable tag:             1.3.4  
+Last Updated:           15-Apr-2024  
+Requires at least:      5.8.0  
 Tested up to:           6.5  
-Requires EAC:           2.3  
+Requires EAC:           2.5  
 Requires PHP:           7.4  
 Contributors:           [earthasylum](https://github.com/earthasylum),[kevinburkholder](https://profiles.wordpress.org/kevinburkholder)  
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1  

@@ -1,11 +1,11 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.3.3
-Last Updated:           04-Apr-2024
-Requires at least:      5.5.0
+Stable tag:             1.3.4
+Last Updated:           15-Apr-2024
+Requires at least:      5.8.0
 Tested up to:           6.5
-Requires EAC:           2.3
+Requires EAC:           2.5
 Requires PHP:           7.4
 Contributors:           earthasylum@github,kevinburkholder@wordpress
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
@@ -436,6 +436,13 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.3.4 – April 15, 2024 =
+
++   Use replaceable email templates for client and administrator notification emails.
++   Added 'eacSoftwareRegistry_client_email_footer' filter for email footer html.
++   Improved code isolation/footprint with admin trait and includes.
++   Minor adjustments to registration page display;
 
 = Version 1.3.3 – April 4, 2024 =
 

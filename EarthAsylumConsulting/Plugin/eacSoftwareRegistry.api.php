@@ -1,4 +1,6 @@
 <?php
+namespace EarthAsylumConsulting\Plugin;
+
 /**
  * EarthAsylum Consulting {eac} Software Registration Server
  *
@@ -7,8 +9,8 @@
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2023 EarthAsylum Consulting <www.earthasylum.com>
- * @version		1.x
+ * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		24.0414.1
  */
 
 namespace EarthAsylumConsulting\Plugin;
