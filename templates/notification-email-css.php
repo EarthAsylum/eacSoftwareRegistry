@@ -40,7 +40,7 @@ $text      = get_option( 'woocommerce_email_text_color', 			'var(--eac-email-tex
 ?>
 
 * {
-	font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif; font-size: 14px; color: <?php echo $text ?>;
+	font-family: 'Helvetica Neue', Helvetica, Roboto, Arial, sans-serif; color: <?php echo $text ?>;
 }
 body {
 	width: 85%; max-width: 720px;
@@ -48,6 +48,7 @@ body {
 	background-color: <?php echo $bg ?>;
 	padding: 1em;
 	line-height: 1.5;
+	font-size: 14px;
 }
 section {
 	background-color: <?php echo $body ?>;
@@ -94,7 +95,8 @@ p.notice:before {
 }
 footer {
 	margin-top: 3em;
-	border-top: 1px solid <?php echo $base ?>;
+	text-align: center;
+	font-size: .9em;
 }
 code {
 	color: <?php echo $base ?>;

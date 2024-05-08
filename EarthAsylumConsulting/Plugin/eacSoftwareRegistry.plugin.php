@@ -302,7 +302,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	{
 		return preg_replace(
 					"/{eac}(\w+)/",
-					"<span class='eac-orange'>{<span class='eac-green'>eac</span>}$1</span>",
+					"<span class='eac-logo-orange'>{<span class='eac-logo-green'>eac</span>}$1</span>",
 					$content
 				);
 	}
@@ -858,6 +858,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			if (!$headers) return;
 
 			$stylesheet = $this->apply_filters('client_email_style', $this->getEmailStyle('client'), $meta, $post);
+			$stylesheet.= "\n.eac-logo-gray {color: #8c8f94;} .eac-logo-green {color: #6e9882;} .eac-logo-orange {color: #da821d;}\n";
 
 			if ($sName 	= $registrar['registrar_name']) {
 				$eName	= str_replace(' ','%20',$sName);
@@ -909,7 +910,11 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			);
 
 			// no 'client_email_footer' unless manually entered
-			$default =	$this->get_option('client_email_footer','');
+			$default =	$this->get_option('client_email_footer',
+				"<a href='".$this->plugin->pluginHeader('PluginURI')."'/>".$this->formatPluginHelp($this->plugin->pluginHeader('Title'))."</a> powered by ".
+				"<a href='https://eacdoojigger.earthasylum.com'/>".$this->formatPluginHelp('{eac}Doojigger')."</a> &copy; ".
+				"<a href='".$this->plugin->pluginHeader('AuthorURI')."'/>".$this->plugin->pluginHeader('Author')."</a>"
+			);
 
 			/**
 			 * filter {classname}_client_email_footer
@@ -967,7 +972,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			if (!$headers) return;
 
 			$stylesheet = rtrim($this->apply_filters('admin_email_style', $this->getEmailStyle('admin'), $meta, $post));
-			$stylesheet.= "\n.eac-gray {color: #707070;} .eac-green {color: #6e9882;} .eac-orange {color: #da821d;}\n";
+			$stylesheet.= "\n.eac-logo-gray {color: #8c8f94;} .eac-logo-green {color: #6e9882;} .eac-logo-orange {color: #da821d;}\n";
 
 			$editPostURL = admin_url("/post.php?post={$post->ID}&action=edit");
 			// no 'admin_email_message' unless manually entered
@@ -994,7 +999,8 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			$registration 	= $post->post_content;
 			$api_source 	= $this->api_source;
 			$footer 		=
-				"<a href='".$this->plugin->pluginHeader('PluginURI')."'/>".$this->formatPluginHelp($this->plugin->pluginHeader('Title'))."</a> &copy; ".
+				"<a href='".$this->plugin->pluginHeader('PluginURI')."'/>".$this->formatPluginHelp($this->plugin->pluginHeader('Title'))."</a> powered by ".
+				"<a href='https://eacdoojigger.earthasylum.com'/>".$this->formatPluginHelp('{eac}Doojigger')."</a> &copy; ".
 				"<a href='".$this->plugin->pluginHeader('AuthorURI')."'/>".$this->plugin->pluginHeader('Author')."</a>".
 				"<div class='eac-gray'>Business Software Development & Information Technology Management</div>";
 

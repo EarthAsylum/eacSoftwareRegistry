@@ -8,7 +8,7 @@
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0415.1
+ * @version		24.0419.1
  */
 
 defined( 'ABSPATH' ) or exit;
@@ -49,9 +49,9 @@ defined( 'ABSPATH' ) or exit;
 	<div id="softwareregistry-wrapper" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>">
 
 		<section class='message'>
-			<?php echo wp_kses_post($message) ?>
+			<?php echo wptexturize(wp_kses_post($message)) ?>
 			<address>
-				<?php echo $signature ?>
+				<?php echo wptexturize($signature) ?>
 			</address>
 		</section>
 
@@ -66,7 +66,7 @@ defined( 'ABSPATH' ) or exit;
 		</section>
 
 		<footer>
-			<?php echo wp_kses_post($footer) ?>
+			<?php echo wptexturize(wp_kses_post($footer)) ?>
 		</footer>
 
 	</div>

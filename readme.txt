@@ -1,11 +1,11 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.3.4
-Last Updated:           15-Apr-2024
-Requires at least:      5.8.0
+Stable tag:             1.3.6
+Last Updated:           08-May-2024
+Requires at least:      5.8
 Tested up to:           6.5
-Requires EAC:           2.5
+Requires EAC:           2.6
 Requires PHP:           7.4
 Contributors:           earthasylum@github,kevinburkholder@wordpress
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
@@ -89,7 +89,7 @@ Both WordPress and non-WordPress projects are supported by the SDK.
 *   **{eac}SoftwareRegistry Software Taxonomy**
 
 The [{eac}SoftwareRegistry Software Taxonomy](https://swregistry.earthasylum.com/software-taxonomy/) extension
-is a simple plugin extension that allows you to set and override {eac}SoftwareRegistry options for specific software products. It both defines the software product as well as the server parameters used when that product is registered via your software registration api. Additionally, you may customize client emails and notifications as well as license-level restrictions. Versiion 2.0+ supports "self-hosted" plugins on Github providing plugin information and automated updates in WordPress built directly from the plugin `readme.txt` file and the Github repositoory.
+is a simple plugin extension that allows you to set and override {eac}SoftwareRegistry options for specific software products. It both defines the software product as well as the server parameters used when that product is registered via your software registration api. Additionally, you may customize client emails and notifications as well as license-level restrictions. Versiion 2.0+ supports "self-hosted" plugins on Github providing plugin information and automated updates in WordPress built directly from the plugin `readme.txt` file and the Github repository.
 
 *   **{eac}SoftwareRegistry Custom Hooks**
 
@@ -416,7 +416,7 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 
 == Upgrade Notice ==
 
-Requires {eac}Doojigger version 2.5+
+Requires {eac}Doojigger version 2.6+
 
 
 == Copyright ==
@@ -436,6 +436,15 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.3.6 – May 8, 2024 =
+
++   Minor tweaks to fix layout on smaller screen/window.
+
+= Version 1.3.5 – April 19, 2024 =
+
++   Further tweaks on notification emails/templates.
++   Suppress automatic tooltips (eacDoojigger).
 
 = Version 1.3.4 – April 15, 2024 =
 

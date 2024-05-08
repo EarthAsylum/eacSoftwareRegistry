@@ -21,15 +21,15 @@ $this->add_filter("options_form_h1_html", function($h1)
 				$this->formatPluginHelp($h1).
 				"<div id='settings_info'>".
 
-				$this->getDocumentationLink(true,'/software-registration-server',"<span class='dashicons dashicons-editor-help button eac-green'></span>").
+				$this->getDocumentationLink(true,'/software-registration-server',"<span class='dashicons dashicons-editor-help button eac-logo-green'></span>").
 				"&nbsp;&nbsp;&nbsp;".
 
 				"<a href='".network_admin_url('/plugin-install.php?s=earthasylum&tab=search&type=term')."' title='Plugins from EarthAsylum Consulting'>".
-				"<span class='dashicons dashicons-admin-plugins button eac-green'></span></a>".
+				"<span class='dashicons dashicons-admin-plugins button eac-logo-green'></span></a>".
 				"&nbsp;&nbsp;&nbsp;".
 
 				"<a href='https://earthasylum.com' title='About EarthAsylum Consulting'>".
-				"<span class='dashicons dashicons-admin-site-alt3 button eac-green'></span></a>".
+				"<span class='dashicons dashicons-admin-site-alt3 button eac-logo-green'></span></a>".
 
 				"</div></div>";
 	}

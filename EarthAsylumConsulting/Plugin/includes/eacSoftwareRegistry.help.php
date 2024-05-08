@@ -42,12 +42,12 @@ $this->addPluginHelpTab($tab,$content,['Getting Help','open']);
 $this->addPluginSidebarText('<h4>For more information:</h4>');
 
 $this->addPluginSidebarLink(
-	"<span class='dashicons dashicons-info-outline eac-green'></span>About This Plugin",
+	"<span class='dashicons dashicons-info-outline eac-logo-green'></span>About This Plugin",
 	"/wp-admin/plugin-install.php?tab=plugin-information&plugin=eacSoftwareRegistry&TB_iframe=true&width=600&height=550",
 	$this->getPluginValue('Title')." Plugin Information Page"
 );
 $this->addPluginSidebarLink(
-	"<span class='dashicons dashicons-rest-api eac-green'></span>API Details",
+	"<span class='dashicons dashicons-rest-api eac-logo-green'></span>API Details",
 	$this->getDocumentationURL(true,'/software-registration-server/#api-details'),
 	"Application Program Interface"
 );

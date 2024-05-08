@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0414.1
+ * @version		24.0425.1
  */
 
 trait eacSoftwareRegistry_administration
@@ -150,7 +150,7 @@ trait eacSoftwareRegistry_administration
 			*::placeholder {text-align: right;}
 			#minor-publishing {display: none;}
 			#local-storage-notice {display: none !important;}
-			.settings-grid-item {padding: .5em 0;}
+			.settings-grid-item {padding: .5em 1.25em .5em 0}
 			.column-title {width: 23%;}
 			.column-comments {width: 3em !important;}
 			.column-registry_email {width: 20%;}
@@ -416,7 +416,7 @@ trait eacSoftwareRegistry_administration
 				'label'		=>	__('Status','eacSoftwareRegistry'),
 				'default'	=>	$this->get_option('registrar_status'),
 				'options'	=>	array_filter($this->REGISTRY_STATUS_CODES,function($v){return $v!='terminated';}),
-				'info'		=>	'<small>change may alter dates</small>',
+				'info'		=>	'<small style="margin-left:-4ch">change may alter dates</small>',
 				'help'		=> false,
 			],
 			'registry_effective'	=> [
@@ -434,11 +434,13 @@ trait eacSoftwareRegistry_administration
 			'email_to_client'		=> [
 				'type'		=>	'button',
 				'label'		=>	'<span class="dashicons dashicons-email-alt"></span>',
-				'default'	=>	'Update &amp; Send to Client'
+				'default'	=>	'Update &amp; Send to Client',
+				'style'		=>	'text-wrap: wrap; text-wrap: pretty; line-height: 1.2;',
+				'class'		=>	'button-primary',
 			],
 		);
 
-		echo "<div class='settings-grid-container' style='grid-template-columns: 5.5em auto;'>\n";
+		echo "<div class='settings-grid-container' style='grid-template-columns: 8em auto;'>\n";
 		$this->add_metabox_fields($fields,$post,12);
 		echo "</div>";
   	}
@@ -474,7 +476,7 @@ trait eacSoftwareRegistry_administration
 			],
 		);
 
-		echo "<div class='settings-grid-container' style='grid-template-columns: 7.5em auto;'>\n";
+		echo "<div class='settings-grid-container' style='grid-template-columns: 8em auto;'>\n";
 		$this->add_metabox_fields($fields,$post,12);
 		echo "</div>";
   	}
@@ -603,7 +605,7 @@ trait eacSoftwareRegistry_administration
 			unset($fields['registry_title']['attributes']);
 		}
 
-		echo "<div class='settings-grid-container' style='grid-template-columns: 15em auto;'>\n";
+		echo "<div class='settings-grid-container' style='grid-template-columns: 30% 70%;'>\n";
 		$this->add_metabox_fields($fields,$post,50);
 		echo "</div>";
   	}
@@ -639,6 +641,7 @@ trait eacSoftwareRegistry_administration
 				$fieldMeta['label'] = ucwords(str_replace('_',' ',$key));
 			}
 
+			$fieldMeta['tooltip'] = false; // don't allow auto info-> tooltip
 			$this->html_input_help('', $key, $fieldMeta);
 			echo $this->html_input_block("_{$key}", $fieldMeta, $fieldValue, $maxWidth);
 		}
