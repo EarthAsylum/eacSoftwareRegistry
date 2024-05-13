@@ -8,7 +8,7 @@
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
 Stable tag:             1.3.6  
-Last Updated:           08-May-2024  
+Last Updated:           13-May-2024  
 Requires at least:      5.8  
 Tested up to:           6.5  
 Requires EAC:           2.6  
@@ -144,7 +144,7 @@ API parameters are passed as an array:
         'registry_title'        => 'Product Title',                 //   your product title
         'registry_description'  => 'Product Description',           //   your product description
         'registry_version'      => 'M.m.p',                         //   your product version
-        'registry_license'      => 'Lx',                            //   'L1'(Lite), 'L2'(Basic), 'L3'(Standard), 'L4'(Professional), 'L5'(Enterprise), 'LD'(Developer)
+        'registry_license'      => 'Lx',                            //   'L1'(Lite), 'L2'(Basic), 'L3'(Standard), 'L4'(Professional), 'L5'(Enterprise), 'LD'(Developer), 'LU'(Unlimited)
         'registry_count'        => int,                             //   Number of licenses (users/seats/devices)
         'registry_variations'   => array('name'=>'value',...),      //   array of name/value pairs
         'registry_options'      => array('value',...),              //   array of registry options

@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0415.1
+ * @version		24.0513.1
  */
 
 require "eacSoftwareRegistry.trait.php";
@@ -103,6 +103,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			'Professional'		=> 'L4',
 			'Enterprise'		=> 'L5',
 			'Developer'			=> 'LD',
+			'Unlimited'			=> 'LU',
 	];
 
 	/**
