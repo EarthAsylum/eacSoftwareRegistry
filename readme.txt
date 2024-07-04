@@ -1,8 +1,8 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.3.6
-Last Updated:           13-May-2024
+Stable tag:             1.3.7
+Last Updated:           04-Jul-2024
 Requires at least:      5.8
 Tested up to:           6.5
 Requires EAC:           2.6
@@ -436,6 +436,10 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.3.7 – July 4, 2024 =
+
++   Fixed client email mailto link.
 
 = Version 1.3.6 – May 13, 2024 =
 

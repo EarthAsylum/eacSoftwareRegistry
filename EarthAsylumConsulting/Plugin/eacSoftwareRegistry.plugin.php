@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0517.1
+ * @version		24.0704.1
  */
 
 require "eacSoftwareRegistry.trait.php";
@@ -866,10 +866,10 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 				$eName	= str_replace(' ','%20',$sName);
 			}
 			if ($sEmail	= $registrar['registrar_contact']) {
-				$sEmail = "<span class='icon'>email</span><a href='mailto:$eName%20<{$sEmail}>?subject=Registration:%20{$meta['registry_key']}'>{$sEmail}</a>";
+				$sEmail = "<span class='icon'>email</span><a href='mailto:{$sEmail}?subject=Registration:%20{$meta['registry_key']}'>{$sEmail}</a>";
 			}
 			if ($sPhone	= $registrar['registrar_phone']) {
-				$sPhone = "<span class='icon'>phone</span><a href='tel:{$sPhone}'>$sPhone</a>";
+				$sPhone = "<span class='icon'>phone</span><a href='tel:{$sPhone}'>{$sPhone}</a>";
 			}
 			if ($sWeb	= $registrar['registrar_web']) {
 				$sWeb	= "<span class='icon'>link</span><a href='{$sWeb}'>{$sWeb}</a>";

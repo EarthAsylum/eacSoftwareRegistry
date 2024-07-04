@@ -14,7 +14,7 @@
  * @wordpress-plugin
  * Plugin Name:			{eac}SoftwareRegistry
  * Description:			Software Registration Server - A feature-rich and easily customized software registration and licensing server for WordPress.
- * Version:				1.3.6
+ * Version:				1.3.7
  * Requires at least:	5.8
  * Tested up to: 		6.5
  * Requires PHP:		7.4
