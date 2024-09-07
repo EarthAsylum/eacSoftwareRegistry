@@ -16,7 +16,7 @@
  * Description:			Software Registration Server - A feature-rich and easily customized software registration and licensing server for WordPress.
  * Version:				1.3.7
  * Requires at least:	5.8
- * Tested up to: 		6.5
+ * Tested up to: 		6.6
  * Requires PHP:		7.4
  * Plugin URI:			https://swregistry.earthasylum.com/
  * Update URI: 			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.json
