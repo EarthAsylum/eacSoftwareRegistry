@@ -16,7 +16,7 @@ class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_exte
 	/**
 	 * @var string extension version
 	 */
-	const VERSION	= '23.0419.1';
+	const VERSION	= '23.1115.1';
 
 
 	/**
@@ -80,6 +80,11 @@ class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_exte
 														home_url("/wp-json/".$this->plugin::CUSTOM_POST_TYPE.$this->plugin::API_VERSION."/revise").'</code></td></tr>'.
 													'</table></details>',
 								),
+			'_btnSubmitOptions'		=> array(
+									'type'		=> 	'hidden',
+									'label'		=> 	'submit',
+									'default'	=> 	'',
+								),
 			]
 		);
 	}
@@ -92,12 +97,6 @@ class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_exte
 	 */
 	public function addActionsAndFilters()
 	{
-		if ($this->plugin->isSettingsPage('distribution'))
-		{
-			\add_action('admin_print_styles', 	function(){
-				echo "<style type='text/css'>#option_submit {display: none;}</style>\n";
-			}, 99 );
-		}
 	}
 }
 /**

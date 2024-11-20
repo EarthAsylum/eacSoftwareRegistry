@@ -7,10 +7,10 @@
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
-Stable tag:             1.3.7  
-Last Updated:           04-Jul-2024  
+Stable tag:             1.4.0  
+Last Updated:           20-Nov-2024  
 Requires at least:      5.8  
-Tested up to:           6.6  
+Tested up to:           6.7  
 Requires EAC:           2.6  
 Requires PHP:           7.4  
 Contributors:           [earthasylum](https://github.com/earthasylum),[kevinburkholder](https://profiles.wordpress.org/kevinburkholder)  
@@ -332,6 +332,7 @@ The API response is a standard object. status->code is an http status, 200 indic
         'message'               -> string,          // html message
     ),
     registryHtml                -> string,          // html (table) of human-readable registration values
+    supplemental                -> mixed,           // supplemental data/html assigned via filters (developer's discretion).
 
 #### Software Distribution Development Kit
 
@@ -420,10 +421,4 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 +   [{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/)
 +   [{eac}SoftwareRegistry WebHooks for WooCommerce](https://swregistry.earthasylum.com/webhooks-for-woocommerce/)
 +   [{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
-
-
-### Upgrade Notice
-
-Requires {eac}Doojigger version 2.6+
-
 

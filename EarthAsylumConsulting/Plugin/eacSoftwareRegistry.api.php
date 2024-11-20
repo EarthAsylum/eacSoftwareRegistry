@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0414.1
+ * @version		24.1119.1
  */
 
 namespace EarthAsylumConsulting\Plugin;
@@ -166,32 +166,49 @@ trait eacSoftwareRegistry_api
 		{
 			$route = explode('/',$request->get_route());
 			$this->setApiAction( end($route) );
+			$isAllowed = false;
 
 			switch ($this->api_action)
 			{
 				case 'create':
-					if ($this->is_option('registrar_create_key',$apiKey)) return true;
+					if ($this->is_option('registrar_create_key',$apiKey)) $isAllowed = true;
 					break;
 				case 'activate':
-					if ($this->is_option('registrar_update_key',$apiKey)) return true;
+					if ($this->is_option('registrar_update_key',$apiKey)) $isAllowed = true;
 					break;
 				case 'deactivate':
-					if ($this->is_option('registrar_update_key',$apiKey)) return true;
+					if ($this->is_option('registrar_update_key',$apiKey)) $isAllowed = true;
 					break;
 				case 'verify':
-					if ($this->is_option('registrar_read_key',$apiKey)) return true;
+					if ($this->is_option('registrar_read_key',$apiKey)) $isAllowed = true;
 					break;
 				case 'refresh':
-					if ($this->is_option('registrar_update_key',$apiKey)) return true;
+					if ($this->is_option('registrar_update_key',$apiKey)) $isAllowed = true;
 					break;
 				case 'revise':
-					if ($this->is_option('registrar_update_key',$apiKey)) return true;
+					if ($this->is_option('registrar_update_key',$apiKey)) $isAllowed = true;
 					break;
+			}
+
+			if ($isAllowed)
+			{
+				// allow origin in CORS
+				if (method_exists($this,'getRequestOrigin')) {
+					$origin = $this->getRequestOrigin();
+					add_filter( 'http_origin', function() use ($origin) {
+						return $origin;
+					});
+					add_filter( 'allowed_http_origins', function ($allowed) use ($origin) {
+						$allowed[] = $origin;
+						return $allowed;
+					});
+				}
+				return true;
 			}
 		}
 
 		http_response_code(401);
-		die( wp_json_encode( $this->api_restResponse( $this->rest_401_error("authentication failure") )->get_data() ) );
+		die( wp_json_encode( $this->api_restResponse( $this->rest_error(401) )->get_data() ) );
 		return false;
 	}
 
@@ -248,7 +265,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->getRequestParameters($rest);
 		if (is_wp_error($request))
 		{
-			return $this->api_restResponse( $this->rest_400_error("invalid request parameters",$request->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(400,"invalid request parameters",$request->get_error_message()) );
 		}
 
 		// check for existing key
@@ -256,7 +273,7 @@ trait eacSoftwareRegistry_api
 		{
 			if (! is_wp_error( $this->getRegistrationPostByKey($request['registry_key'])) )
 			{
-				return $this->api_restResponse( $this->rest_406_error("registration key already exists") );
+				return $this->api_restResponse( $this->rest_error(406,"registration key already exists") );
 			}
 		}
 
@@ -299,7 +316,7 @@ trait eacSoftwareRegistry_api
 					]
 				))
 			) {
-				return $this->api_restResponse( $this->rest_406_error("registration for this host with this email and product already exists") );
+				return $this->api_restResponse( $this->rest_error(406,"registration for this host with this email and product already exists") );
 			}
 		}
 		else
@@ -310,7 +327,7 @@ trait eacSoftwareRegistry_api
 					]
 				))
 			) {
-				return $this->api_restResponse( $this->rest_406_error("registration with this email and product already exists") );
+				return $this->api_restResponse( $this->rest_error(406,"registration with this email and product already exists") );
 			}
 		}
 
@@ -380,7 +397,7 @@ trait eacSoftwareRegistry_api
 		}
 		if (is_wp_error($post))
 		{
-			return $this->api_restResponse( $this->rest_500_error("failed to create registration",$post->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(500,"failed to create registration",$post->get_error_message()) );
 		}
 
 		return $this->api_restResponse( $this->apiRegistrationValues($request['registry_key'],get_post($post)) );
@@ -410,7 +427,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->getRequestParameters($rest);
 		if (is_wp_error($request))
 		{
-			return $this->api_restResponse( $this->rest_400_error("invalid request parameters",$request->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(400,"invalid request parameters",$request->get_error_message()) );
 		}
 
 		$post = $this->getRegistrationPostByKey($request['registry_key'],true);
@@ -474,7 +491,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->apply_filters('api_'.$this->api_action.'_registration', $request, $post);
 		if (is_wp_error($request))
 		{
-			return $this->api_restResponse( $this->rest_500_error("failed to ".$this->api_action." registration",$request->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(500,"failed to ".$this->api_action." registration",$request->get_error_message()) );
 		}
 
 		$exclude = ['registry_key'];
@@ -501,7 +518,7 @@ trait eacSoftwareRegistry_api
 
 		if (is_wp_error($result))
 		{
-			return $this->api_restResponse( $this->rest_500_error("failed to ".$this->api_action." registration",$result->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(500,"failed to ".$this->api_action." registration",$result->get_error_message()) );
 		}
 
 		return $this->api_restResponse( $this->apiRegistrationValues($request['registry_key'],$post) );
@@ -519,7 +536,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->getRequestParameters($rest);
 		if (is_wp_error($request))
 		{
-			return $this->api_restResponse( $this->rest_400_error("invalid request parameters",$request->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(400,"invalid request parameters",$request->get_error_message()) );
 		}
 
 		$post = $this->getRegistrationPostByKey($request['registry_key'],true);
@@ -538,7 +555,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->apply_filters('api_deactivate_registration', $request, $post);
 		if (is_wp_error($request))
 		{
-			return $this->api_restResponse( $this->rest_500_error("failed to deactivate registration",$request->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(500,"failed to deactivate registration",$request->get_error_message()) );
 		}
 
 		$post->post_status = $this->POST_STATUS_CODES['terminated'];
@@ -554,7 +571,7 @@ trait eacSoftwareRegistry_api
 
 		if (is_wp_error($result))
 		{
-			return $this->api_restResponse( $this->rest_500_error("failed to deactivate registration",$result->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(500,"failed to deactivate registration",$result->get_error_message()) );
 		}
 
 		return $this->api_restResponse( $this->apiRegistrationValues($request['registry_key'],$post) );
@@ -572,7 +589,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->getRequestParameters($rest);
 		if (is_wp_error($request))
 		{
-			return $this->api_restResponse( $this->rest_400_error("invalid request parameters",$request->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(400,"invalid request parameters",$request->get_error_message()) );
 		}
 
 		$post = $this->getRegistrationPostByKey($request['registry_key'],true);
@@ -612,7 +629,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->apply_filters('api_verify_registration', $request, $post);
 		if (is_wp_error($request))
 		{
-			return $this->api_restResponse( $this->rest_500_error("failed to verify registration",$request->get_error_message()) );
+			return $this->api_restResponse( $this->rest_error(500,"failed to verify registration",$request->get_error_message()) );
 		}
 
 		update_post_meta($post->ID,"registry_refreshed", $post->meta_input['registry_refreshed']);
@@ -725,7 +742,7 @@ trait eacSoftwareRegistry_api
 			else if ($chkRequired)
 			{
 				if ($default === true) {
-					return $this->rest_400_error("{$name} is required for registration");
+					return $this->rest_error(400,"{$name} is required for registration");
 				} else {
 					$request[$name] = $default;
 				}
@@ -750,7 +767,7 @@ trait eacSoftwareRegistry_api
 		{
 			if (sanitize_title($request['registry_product']) != sanitize_title($defaults['registry_product']))
 			{
-				return $this->rest_400_error("registry_product does not match registration product");
+				return $this->rest_error(400,"registry_product does not match registration product");
 			}
 		}
 
@@ -772,7 +789,7 @@ trait eacSoftwareRegistry_api
 			$request['registry_email'] = strtolower($request['registry_email']);
 			if (! is_email($request['registry_email']))
 			{
-				return $this->rest_400_error("valid registry_email is required for registration");
+				return $this->rest_error(400,"valid registry_email is required for registration");
 			}
 		}
 
@@ -972,7 +989,7 @@ trait eacSoftwareRegistry_api
 		$request = $this->apply_filters('validate_registration', $request, $wpPost, $this->api_action);
 		if (is_wp_error($request))
 		{
-			return $this->rest_400_error("failed registration validation",$request->get_error_message());
+			return $this->rest_error(400,"failed registration validation",$request->get_error_message());
 		}
 
 		return $request;
@@ -1148,7 +1165,7 @@ trait eacSoftwareRegistry_api
 	{
 		if (empty($registry_key))
 		{
-			return $this->rest_400_error("registration key is required");
+			return $this->rest_error(400,"registration key is required");
 		}
 
 		if (empty($post))
@@ -1170,7 +1187,7 @@ trait eacSoftwareRegistry_api
 		$meta = $this->apply_filters('api_registration_values', $meta, $post, $this->api_action);
 		if (is_wp_error($meta))
 		{
-			return $this->rest_400_error("registration values missing or invalid",$meta->get_error_message());
+			return $this->rest_error(400,"registration values missing or invalid",$meta->get_error_message());
 		}
 
 		$this->setClientTimezone($meta);
@@ -1314,6 +1331,36 @@ trait eacSoftwareRegistry_api
 			$default
 		);
 
+		/**
+		 * filter {classname}_api_registration_supplemental
+		 *
+		 * @param	mixed supplemental
+		 * @param	array registration
+		 * @param	array post
+		 * @param	string action
+		 * @return	mixed supplemental
+		 */
+		$default = $this->apply_filters('api_registration_supplemental', '',
+			$meta,
+			$post,
+			$this->api_action
+		);
+
+		/**
+		 * filter {classname}_client_api_supplemental
+		 *
+		 * @param	mixed supplemental
+		 * @param	array registration
+		 * @param	string action
+		 * @return	mixed supplemental
+		 */
+		$supplemental = $this->clientMessageMerge(
+			$this->apply_filters('client_api_supplemental', $default, $meta, $post),
+			$meta,
+			$this->api_action,
+			$default
+		);
+
 		$refreshSchedule = sanitize_key(array_search($refreshInterval,$this->REGISTRY_REFRESH_INTERVALS) ?: 'other');
 
 		$registrar 	= $this->getRegistrarOptions('api',$meta);
@@ -1330,6 +1377,7 @@ trait eacSoftwareRegistry_api
 				'message'			=> $message,
 			],
 			'registryHtml'			=> $this->getPostHtml($meta,'api'),
+			'supplemental' 			=> $this->plugin->wp_kses($supplemental),
 		];
 	}
 
@@ -1418,7 +1466,7 @@ trait eacSoftwareRegistry_api
 	{
 		if (empty($key))
 		{
-			return $this->rest_400_error("registration key is required");
+			return $this->rest_error(400,"registration key is required");
 		}
 
 		return $this->getRegistrationPost('post_title',$key,$metaQuery,$includeMeta);
@@ -1437,7 +1485,7 @@ trait eacSoftwareRegistry_api
 	{
 		if (empty($email))
 		{
-			return $this->rest_400_error("registration email is required");
+			return $this->rest_error(400,"registration email is required");
 		}
 		// change from post_excerpt to post_password
 		return $this->getRegistrationPost('post_password',$email,$metaQuery,$includeMeta);
@@ -1479,7 +1527,7 @@ trait eacSoftwareRegistry_api
 
 		$posts = $this->wpdb->get_results( $sql, OBJECT_K );
 
-		$this->logDebug([$sql,$posts],__METHOD__.' ('.current_action().')');
+		//$this->logDebug([$sql,$posts],__METHOD__.' ('.current_action().')');
 
 		if (! is_wp_error($posts) && ! empty($posts))
 		{
@@ -1487,11 +1535,11 @@ trait eacSoftwareRegistry_api
 			// not re-activating a terminated registration
 			if ($this->api_action != 'activate' && $post->post_status == 'trash')
 			{
-				return $this->rest_410_error("registration terminated");
+				return $this->rest_error(410,"registration terminated");
 			}
 			if ($this->api_action == 'create' && $post->post_status == 'private')
 			{
-				return $this->rest_410_error("registration inactive");
+				return $this->rest_error(410,"registration inactive");
 			}
 			if ($includeMeta) {
 				$post->meta_input = $this->getPostMetaValues($post->ID);
@@ -1499,7 +1547,7 @@ trait eacSoftwareRegistry_api
 			return $post;
 		}
 
-		return $this->rest_404_error("registration post for '{$postValue}' not found");
+		return $this->rest_error(404,"registration post for '{$postValue}' not found");
 	}
 
 
@@ -1569,98 +1617,29 @@ trait eacSoftwareRegistry_api
 
 	/*
 	 *
-	 * Software Registration API Errors
+	 * Software Registration API Error
 	 *
 	 */
 
 
 	/**
-	 * 400 error
+	 * API error response
 	 *
 	 * @return object WP_Error
 	 */
-	private function rest_400_error($message='bad request',$error=null)
+	private function rest_error(int $status, string $message=null, string $error=null)
 	{
-		if ($error) $message .=' -> '.$error;
-		$this->logError($message,__METHOD__);
-		return new \wp_error('400',__('bad request','eacSoftwareRegistry'), ['code'=>'400','message'=>__($message,'eacSoftwareRegistry')]);
-	}
-
-
-	/**
-	 * 401 error
-	 *
-	 * @return object WP_Error
-	 */
-	private function rest_401_error($message='unauthorized',$error=null)
-	{
-		if ($error) $message .=' -> '.$error;
-		$this->logError($message,__METHOD__);
-		return new \wp_error('401',__('unauthorized','eacSoftwareRegistry'), ['code'=>'401','message'=>__($message,'eacSoftwareRegistry')]);
-	}
-
-
-	/**
-	 * 403 error
-	 *
-	 * @return object WP_Error
-	 */
-	private function rest_403_error($message='forbidden',$error=null)
-	{
-		if ($error) $message .=' -> '.$error;
-		$this->logError($message,__METHOD__);
-		return new \wp_error('403',__('forbidden','eacSoftwareRegistry'), ['code'=>'403','message'=>__($message,'eacSoftwareRegistry')]);
-	}
-
-
-	/**
-	 * 404 error
-	 *
-	 * @return object WP_Error
-	 */
-	private function rest_404_error($message='not found',$error=null)
-	{
-		if ($error) $message .=' -> '.$error;
-		$this->logError($message,__METHOD__);
-		return new \wp_error('404',__('not found','eacSoftwareRegistry'), ['code'=>'404','message'=>__($message,'eacSoftwareRegistry')]);
-	}
-
-
-	/**
-	 * 406 error
-	 *
-	 * @return object WP_Error
-	 */
-	private function rest_406_error($message='not acceptable',$error=null)
-	{
-		if ($error) $message .=' -> '.$error;
-		$this->logError($message,__METHOD__);
-		return new \wp_error('406',__('not acceptable','eacSoftwareRegistry'), ['code'=>'406','message'=>__($message,'eacSoftwareRegistry')]);
-	}
-
-
-	/**
-	 * 410 error
-	 *
-	 * @return object WP_Error
-	 */
-	private function rest_410_error($message='gone',$error=null)
-	{
-		if ($error) $message .=' -> '.$error;
-		$this->logError($message,__METHOD__);
-		return new \wp_error('410',__('gone','eacSoftwareRegistry'), ['code'=>'410','message'=>__($message,'eacSoftwareRegistry')]);
-	}
-
-
-	/**
-	 * 500 error
-	 *
-	 * @return object WP_Error
-	 */
-	private function rest_500_error($message='internal server error',$error=null)
-	{
-		if ($error) $message .=' -> '.$error;
-		$this->logError($message,__METHOD__);
-		return new \wp_error('500',__('internal server error','eacSoftwareRegistry'), ['code'=>'500','message'=>__($message,'eacSoftwareRegistry')]);
+		if (empty($message)) {
+			$message = strtolower(get_status_header_desc($status));
+		}
+		if (!empty($error)) {
+			$message .=' -> '.$error;
+		}
+		$this->logError('Status: '.$status.' '.$message,__METHOD__);
+		return new \wp_error(
+			(string)$status,
+			__(get_status_header_desc($status),'eacSoftwareRegistry'),
+			['code'=>(string)$status,'message'=>__($message,'eacSoftwareRegistry')]
+		);
 	}
 }

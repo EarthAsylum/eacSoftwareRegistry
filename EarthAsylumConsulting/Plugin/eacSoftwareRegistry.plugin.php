@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0704.1
+ * @version		24.1111.1
  */
 
 require "eacSoftwareRegistry.trait.php";
@@ -193,7 +193,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	{
 		parent::__construct($header);
 
-		$this->logAlways('version '.$this->getVersion().' '.wp_date('Y-m-d H:i:s',filemtime(__FILE__)),__CLASS__);
+		$this->logInfo('version '.$this->getVersion().' '.wp_date('Y-m-d H:i:s',filemtime(__FILE__)),__CLASS__);
 
 		// register the custom  post type
 		add_action( 'init', 							array($this, 'register_custom_post_type') );
@@ -487,7 +487,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			]),$request,'update');
 
 			$request = $this->sanitizeRequest($request,$defaults);
-			$this->logDebug($request,__METHOD__);
+			//$this->logDebug($request,__METHOD__);
 
 			if (!isset($request['registry_key']))
 			{
@@ -577,7 +577,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 		}
 
 		$postHasChanged = (!$this->prior_meta || $this->prior_meta != $post->meta_input);
-		if ($postHasChanged) $this->logDebug([$this->prior_meta,$post->meta_input],__METHOD__);
+		//if ($postHasChanged) $this->logDebug([$this->prior_meta,$post->meta_input],__METHOD__);
 
 		$request = $this->getRegistrationMeta($post);
 
@@ -812,6 +812,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	private function clientMessageMerge($message, $registration, $apiAction=null, $default='')
 	{
 		if (empty($message)) return $message;
+		if (!is_string($message)) return $message;
 
 		$context 	= $this->getApiAction($apiAction);
 		$registrar 	= $this->getRegistrarOptions('all',$registration);

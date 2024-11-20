@@ -1,10 +1,10 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.3.7
-Last Updated:           04-Jul-2024
+Stable tag:             1.4.0
+Last Updated:           20-Nov-2024
 Requires at least:      5.8
-Tested up to:           6.6
+Tested up to:           6.7
 Requires EAC:           2.6
 Requires PHP:           7.4
 Contributors:           earthasylum@github,kevinburkholder@wordpress
@@ -324,6 +324,7 @@ The API response is a standard object. status->code is an http status, 200 indic
         'message'               -> string,          // html message
     ),
     registryHtml                -> string,          // html (table) of human-readable registration values
+    supplemental                -> mixed,           // supplemental data/html assigned via filters (developer's discretion).
 
 = Software Distribution Development Kit =
 
@@ -414,11 +415,6 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 +   [{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
 
 
-== Upgrade Notice ==
-
-Requires {eac}Doojigger version 2.6+
-
-
 == Copyright ==
 
 = Copyright © 2019-2024, EarthAsylum Consulting, All rights reserved. =
@@ -436,6 +432,16 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.4.0 – November 20, 2024 =
+
++   Compatible with WordPress 6.7 and {eac}Doojigger 3.0.
++   Added new `supplemental` key to registration api return object (developer discretion).
+    +   `api_registration_supplemental` filter.
+    +   `client_api_supplemental` filter with message merge. 
++   Simplified api error processing.
++   Removed extraneous debugging.
++   Add REST origin (via `getRequestOrigin()`) to `allowed_http_origins` filter for CORS authorization.
 
 = Version 1.3.7 – July 4, 2024 =
 
