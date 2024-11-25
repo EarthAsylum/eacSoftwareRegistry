@@ -8,7 +8,7 @@
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0419.1
+ * @version		24.1125.1
  */
 
 defined( 'ABSPATH' ) or exit;
@@ -25,6 +25,7 @@ defined( 'ABSPATH' ) or exit;
  * 		$footer			- customer footer, default or eacSoftwareRegistry_client_email_footer filter
  * 		$context 		- 'created'|'activated'|'deactivated'|'revised'|'renewed'|'refreshed'|'verified'|'updated'
  * @variables (structured)
+ *		$this			- eacSoftwareRegistry plugin
  * 		$post			- registration post
  * 		$meta			- registration post meta data
  * 		$registrar		- array of registrar options
@@ -49,7 +50,7 @@ defined( 'ABSPATH' ) or exit;
 	<div id="softwareregistry-wrapper" dir="<?php echo is_rtl() ? 'rtl' : 'ltr'; ?>">
 
 		<section class='message'>
-			<?php echo wptexturize(wp_kses_post($message)) ?>
+			<?php echo wptexturize($this->wp_kses($message)) ?>
 			<address>
 				<?php echo wptexturize($signature) ?>
 			</address>
@@ -58,15 +59,15 @@ defined( 'ABSPATH' ) or exit;
 		<p>Registration Details:</p>
 
 		<div class='notices'>
-			<?php echo wp_kses_post($notices) ?>
+			<?php echo $this->wp_kses($notices) ?>
 		</div>
 
 		<section class='registry'>
-			<?php echo wp_kses_post($registration) ?>
+			<?php echo $this->wp_kses($registration) ?>
 		</section>
 
 		<footer>
-			<?php echo wptexturize(wp_kses_post($footer)) ?>
+			<?php echo wptexturize($this->wp_kses($footer)) ?>
 		</footer>
 
 	</div>

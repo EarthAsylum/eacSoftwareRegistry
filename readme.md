@@ -7,8 +7,8 @@
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
-Stable tag:             1.4.0  
-Last Updated:           20-Nov-2024  
+Stable tag:             1.4.1  
+Last Updated:           25-Nov-2024  
 Requires at least:      5.8  
 Tested up to:           6.7  
 Requires EAC:           2.6  
@@ -97,7 +97,7 @@ Both WordPress and non-WordPress projects are supported by the SDK.
 *   **{eac}SoftwareRegistry Software Taxonomy**
 
 The [{eac}SoftwareRegistry Software Taxonomy](https://swregistry.earthasylum.com/software-taxonomy/) extension
-is a simple plugin extension that allows you to set and override {eac}SoftwareRegistry options for specific software products. It both defines the software product as well as the server parameters used when that product is registered via your software registration api. Additionally, you may customize client emails and notifications as well as license-level restrictions. Versiion 2.0+ supports "self-hosted" plugins on Github providing plugin information and automated updates in WordPress built directly from the plugin `readme.txt` file and the Github repository.
+is a simple plugin extension that allows you to set and override {eac}SoftwareRegistry options for specific software products. It both defines the software product as well as the server parameters used when that product is registered via your software registration api. Additionally, you may customize client emails and notifications as well as license-level restrictions. Version 2.0+ supports "self-hosted" plugins on Github providing plugin information and automated updates in WordPress built directly from the plugin `readme.txt` file and the Github repository.
 
 *   **{eac}SoftwareRegistry Custom Hooks**
 

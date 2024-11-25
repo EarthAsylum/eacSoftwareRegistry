@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.1111.1
+ * @version		24.1124.1
  */
 
 require "eacSoftwareRegistry.trait.php";
@@ -915,8 +915,9 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			// no 'client_email_footer' unless manually entered
 			$default =	$this->get_option('client_email_footer',
 				"<a href='".$this->plugin->pluginHeader('PluginURI')."'/>".$this->formatPluginHelp($this->plugin->pluginHeader('Title'))."</a> powered by ".
-				"<a href='https://eacdoojigger.earthasylum.com'/>".$this->formatPluginHelp('{eac}Doojigger')."</a> &copy; ".
-				"<a href='".$this->plugin->pluginHeader('AuthorURI')."'/>".$this->plugin->pluginHeader('Author')."</a>"
+				"<a href='https://eacdoojigger.earthasylum.com'/>".$this->formatPluginHelp('{eac}Doojigger')."</a>".
+				"<br>Developed by <a href='http://www.earthasylum.com/'> <span class='eac-logo-green'>Earth</span><span class='eac-logo-orange'>Asylum</span> <span class='eac-logo-gray'>Consulting</span></a>".
+				"<br>Business Software Development &amp; Information Technology Management"
 			);
 
 			/**
@@ -1003,9 +1004,9 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			$api_source 	= $this->api_source;
 			$footer 		=
 				"<a href='".$this->plugin->pluginHeader('PluginURI')."'/>".$this->formatPluginHelp($this->plugin->pluginHeader('Title'))."</a> powered by ".
-				"<a href='https://eacdoojigger.earthasylum.com'/>".$this->formatPluginHelp('{eac}Doojigger')."</a> &copy; ".
-				"<a href='".$this->plugin->pluginHeader('AuthorURI')."'/>".$this->plugin->pluginHeader('Author')."</a>".
-				"<div class='eac-gray'>Business Software Development & Information Technology Management</div>";
+				"<a href='https://eacdoojigger.earthasylum.com'/>".$this->formatPluginHelp('{eac}Doojigger')."</a>".
+				"<br>Developed by <a href='http://www.earthasylum.com/'> <span class='eac-logo-green'>Earth</span><span class='eac-logo-orange'>Asylum</span> <span class='eac-logo-gray'>Consulting</span></a>".
+				"<br>Business Software Development &amp; Information Technology Management";
 
 			$template_name 	= 'administrator-notification-email.php';
 			ob_start();
