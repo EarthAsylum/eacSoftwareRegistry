@@ -1,11 +1,11 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.4.2
+Stable tag:             1.4.3
 Last Updated:           31-Mar-2025
 Requires at least:      5.8
 Tested up to:           6.8
-Requires EAC:           3.0
+Requires EAC:           3.1
 Requires PHP:           7.4
 Contributors:           earthasylum@github,kevinburkholder@wordpress
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
@@ -415,6 +415,11 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 +   [{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
 
 
+== Upgrade Notice ==
+
+Requires {eac}Doojigger version 3.1+
+
+
 == Copyright ==
 
 = Copyright © 2019-2024, EarthAsylum Consulting, All rights reserved. =
@@ -432,6 +437,11 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.4.3 – March 31, 2025 =
+
++   Remove unused scheduled events on install.
++   Require {eac}Doojigger 3.1.
 
 = Version 1.4.2 – March 31, 2025 =
 

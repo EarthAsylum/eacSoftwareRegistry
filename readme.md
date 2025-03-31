@@ -7,11 +7,11 @@
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
-Stable tag:             1.4.2  
+Stable tag:             1.4.3  
 Last Updated:           31-Mar-2025  
 Requires at least:      5.8  
 Tested up to:           6.8  
-Requires EAC:           3.0  
+Requires EAC:           3.1  
 Requires PHP:           7.4  
 Contributors:           [earthasylum](https://github.com/earthasylum),[kevinburkholder](https://profiles.wordpress.org/kevinburkholder)  
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1  
@@ -421,4 +421,10 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 +   [{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/)
 +   [{eac}SoftwareRegistry WebHooks for WooCommerce](https://swregistry.earthasylum.com/webhooks-for-woocommerce/)
 +   [{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
+
+
+### Upgrade Notice
+
+Requires {eac}Doojigger version 3.1+
+
 

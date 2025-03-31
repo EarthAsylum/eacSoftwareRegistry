@@ -9,8 +9,8 @@ namespace EarthAsylumConsulting\Plugin;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.1102.1
+ * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		25.0331.1
  */
 
 trait eacSoftwareRegistry_administration
@@ -696,6 +696,11 @@ trait eacSoftwareRegistry_administration
 	 */
 	public function admin_plugin_updated($curVersion,$newVersion)
 	{
+		foreach ( ['hourly_event','daily_event','weekly_event'] as $eventName)
+		{
+			$eventName = $this->prefixHookName($eventName);
+			wp_unschedule_hook($eventName);
+		}
 	}
 
 }
