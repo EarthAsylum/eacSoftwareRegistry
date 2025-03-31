@@ -1,11 +1,11 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.4.1
-Last Updated:           25-Nov-2024
+Stable tag:             1.4.2
+Last Updated:           31-Mar-2025
 Requires at least:      5.8
-Tested up to:           6.7
-Requires EAC:           2.6
+Tested up to:           6.8
+Requires EAC:           3.0
 Requires PHP:           7.4
 Contributors:           earthasylum@github,kevinburkholder@wordpress
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
@@ -432,6 +432,12 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.4.2 – March 31, 2025 =
+
++   Compatible with WordPress 6.8.
++   Extensions now use `options_settings_page` action to load admin screen options.
+    +   Prevents '_load_textdomain_just_in_time' notices from WordPress.
 
 = Version 1.4.1 – November 25, 2024 =
 

@@ -7,7 +7,7 @@ namespace EarthAsylumConsulting\Extensions;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2021 EarthAsylum Consulting <www.earthasylum.com>
+ * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
  * @version		1.x
  */
 
@@ -16,7 +16,7 @@ class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_exte
 	/**
 	 * @var string extension version
 	 */
-	const VERSION	= '23.1115.1';
+	const VERSION		= '25.0331.1';
 
 
 	/**
@@ -31,7 +31,17 @@ class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_exte
 
 		/* Register this extension with [group name, tab name] and settings array */
 		$this->registerExtension( false );
+		// Register plugin options when needed
+		$this->add_action( "options_settings_page", array($this, 'admin_options_settings') );
+	}
 
+
+	/**
+	 * register options on options_settings_page
+	 *
+	 */
+	public function admin_options_settings()
+	{
 		$this->registerExtensionOptions( [ $this->className, 'distribution' ],
 			[
 				'_api_display'	=> array(
