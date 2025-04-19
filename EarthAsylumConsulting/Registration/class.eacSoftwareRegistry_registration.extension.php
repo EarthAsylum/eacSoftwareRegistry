@@ -25,12 +25,20 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 	/**
 	 * @var string extension version
 	 */
-	const VERSION	= '23.0405.1';
+	const VERSION	= '25.0419.1';
 
 	/**
 	 * @var ALIAS constant ($this->Registration->...)
 	 */
 	const ALIAS		= 'Registration';
+
+	/**
+	 * @var string|array|bool to set (or disable) default group display/switch
+	 * 		false 		disable the 'Enabled'' option for this group
+	 * 		string 		the label for the 'Enabled' option
+	 * 		array 		override options for the 'Enabled' option (label,help,title,info, etc.)
+	 */
+	const ENABLE_OPTION	= false;
 
 
 	/**
@@ -41,7 +49,6 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 	 */
 	public function __construct($plugin)
 	{
-		$this->enable_option = false;
 		parent::__construct($plugin, self::ALLOW_ALL);
 
 		if ($this->is_admin())

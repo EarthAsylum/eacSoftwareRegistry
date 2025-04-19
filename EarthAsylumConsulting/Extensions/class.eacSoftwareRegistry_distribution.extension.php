@@ -18,6 +18,14 @@ class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_exte
 	 */
 	const VERSION		= '25.0331.1';
 
+	/**
+	 * @var string|array|bool to set (or disable) default group display/switch
+	 * 		false 		disable the 'Enabled'' option for this group
+	 * 		string 		the label for the 'Enabled' option
+	 * 		array 		override options for the 'Enabled' option (label,help,title,info, etc.)
+	 */
+	const ENABLE_OPTION	= false;
+
 
 	/**
 	 * constructor method
@@ -30,7 +38,7 @@ class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_exte
 		parent::__construct($plugin, self::ALLOW_ADMIN|self::ONLY_ADMIN);
 
 		/* Register this extension with [group name, tab name] and settings array */
-		$this->registerExtension( false );
+		$this->registerExtension( [ $this->className, 'distribution' ] );
 		// Register plugin options when needed
 		$this->add_action( "options_settings_page", array($this, 'admin_options_settings') );
 	}

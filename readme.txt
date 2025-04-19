@@ -1,8 +1,8 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.4.3
-Last Updated:           31-Mar-2025
+Stable tag:             1.4.4
+Last Updated:           19-Apr-2025
 Requires at least:      5.8
 Tested up to:           6.8
 Requires EAC:           3.1
@@ -422,7 +422,7 @@ Requires {eac}Doojigger version 3.1+
 
 == Copyright ==
 
-= Copyright © 2019-2024, EarthAsylum Consulting, All rights reserved. =
+= Copyright © 2019-2025, EarthAsylum Consulting, All rights reserved. =
 
 __This is proprietary, copyrighted software.__
 
@@ -437,6 +437,10 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.4.4 – April 19, 2025 =
+
++   Register distribution extension on construct.
 
 = Version 1.4.3 – March 31, 2025 =
 
