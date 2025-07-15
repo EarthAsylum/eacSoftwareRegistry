@@ -9,8 +9,8 @@ namespace EarthAsylumConsulting\Plugin;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.1119.1
+ * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		25.0715.1
  */
 
 namespace EarthAsylumConsulting\Plugin;
@@ -1201,7 +1201,7 @@ trait eacSoftwareRegistry_api
 			//$domain = str_replace('www.','',parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST));
 			$domain = preg_replace('/^www\.(.+\.)/i', '$1', parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST));
 
-			if (isset($meta['registry_domains']) && ! in_array($domain,$meta['registry_domains']))
+			if (isset($meta['registry_domains']) && ! in_array($domain,(array)$meta['registry_domains']))
 			{
 				$meta['registry_status'] 	= 'invalid';
 				$meta['registry_valid']		=  false;

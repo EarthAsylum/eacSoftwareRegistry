@@ -1,13 +1,14 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.4.4
-Last Updated:           19-Apr-2025
+Stable tag:             1.4.5
+Last Updated:           15-Jul-2025
 Requires at least:      5.8
 Tested up to:           6.8
 Requires EAC:           3.1
 Requires PHP:           7.4
 Contributors:           earthasylum@github,kevinburkholder@wordpress
+Donate link:            https://github.com/sponsors/EarthAsylum
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
 License URI:            https://swregistry.earthasylum.com/end-user-license-agreement/
 Tags:                   software registration, software registry, software license, license manager, registration API
@@ -437,6 +438,10 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.4.5 – July 15, 2025 =
+
++   Fix array error when validating registry domains.
 
 = Version 1.4.4 – April 19, 2025 =
 

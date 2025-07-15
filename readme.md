@@ -7,13 +7,14 @@
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
-Stable tag:             1.4.4  
-Last Updated:           19-Apr-2025  
+Stable tag:             1.4.5  
+Last Updated:           15-Jul-2025  
 Requires at least:      5.8  
 Tested up to:           6.8  
 Requires EAC:           3.1  
 Requires PHP:           7.4  
 Contributors:           [earthasylum](https://github.com/earthasylum),[kevinburkholder](https://profiles.wordpress.org/kevinburkholder)  
+Donate link:            https://github.com/sponsors/EarthAsylum  
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1  
 License URI:            https://swregistry.earthasylum.com/end-user-license-agreement/  
 Tags:                   software registration, software registry, software license, license manager, registration API  
