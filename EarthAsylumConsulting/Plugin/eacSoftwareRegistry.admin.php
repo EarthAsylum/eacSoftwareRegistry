@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0331.1
+ * @version		25.0719.1
  */
 
 trait eacSoftwareRegistry_administration
@@ -150,7 +150,7 @@ trait eacSoftwareRegistry_administration
 			*::placeholder {text-align: right;}
 			#minor-publishing {display: none;}
 			#local-storage-notice {display: none !important;}
-			.settings-grid-item {padding: .5em 1.25em .5em 0}
+			.settings-grid-item {padding: .5em 1.35em .5em 0}
 			.column-title {width: 23%;}
 			.column-comments {width: 3em !important;}
 			.column-registry_email {width: 20%;}
@@ -416,20 +416,29 @@ trait eacSoftwareRegistry_administration
 				'label'		=>	__('Status','eacSoftwareRegistry'),
 				'default'	=>	$this->get_option('registrar_status'),
 				'options'	=>	array_filter($this->REGISTRY_STATUS_CODES,function($v){return $v!='terminated';}),
-				'info'		=>	'<small style="margin-left:-4ch">change may alter dates</small>',
+				'info'		=>	'Change may alter dates',
 				'help'		=> false,
 			],
 			'registry_effective'	=> [
 				'type'		=>	'date',
 				'label'		=>	__('Effective','eacSoftwareRegistry'),
 				'default'	=>	$this->getDateTimeInZone('now')->format('Y-m-d'),
+				'info' 		=> 	'Effective date - '.$this->get_option('registrar_timezone','UTC'),
 				'attributes'=>	['required=true']
 			],
 			'registry_expires'		=> [
 				'type'		=>	'date',
 				'label'		=>	__('Expires','eacSoftwareRegistry'),
 				'default'	=>	$this->getDateTimeInZone('now','+'.$this->get_option('registrar_term'))->format('Y-m-d'),
+				'info' 		=> 	'Expiration date - '.$this->get_option('registrar_timezone','UTC'),
 				'attributes'=>	['required=true']
+			],
+			'registry_autoupdate'	=> [
+				'type'		=>	'switch',
+				'label'		=>	'<span class="dashicons dashicons-update"></span>',
+				'options'	=> [__('Auto Update','eacSoftwareRegistry')=>1],
+				'info'		=>	'<b>Auto Update</b><br>Automatically update &amp; renew',
+				'help'		=> false,
 			],
 			'email_to_client'		=> [
 				'type'		=>	'button',
@@ -641,7 +650,7 @@ trait eacSoftwareRegistry_administration
 				$fieldMeta['label'] = ucwords(str_replace('_',' ',$key));
 			}
 
-			$fieldMeta['tooltip'] = false; // don't allow auto info-> tooltip
+		//	$fieldMeta['tooltip'] = false; // don't allow auto info-> tooltip
 			$this->html_input_help('', $key, $fieldMeta);
 			echo $this->html_input_block("_{$key}", $fieldMeta, $fieldValue, $maxWidth);
 		}

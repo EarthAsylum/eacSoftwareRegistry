@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.1124.1
+ * @version		25.0719.1
  */
 
 require "eacSoftwareRegistry.trait.php";
@@ -152,6 +152,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 * @var array optional registration field defaults
 	 */
 	const REGISTRY_OPTIONAL = [
+			'registry_autoupdate'	=> false,
 			'registry_transid'		=> '',
 			'registry_paydue'		=> '',
 			'registry_payamount'	=> '',
@@ -536,6 +537,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			//else
 			if ($this->getDateTimeInZone($request['registry_expires'].' 23:59:59') < $this->getDateTimeInZone())
 			{
+				$this->logDebug([$this->getDateTimeInZone($request['registry_expires'].' 23:59:59'),$this->getDateTimeInZone()],__METHOD__);
 				$request['registry_status'] = 'expired';
 			}
 			else if ($this->getDateTimeInZone($request['registry_effective'].' 00:00:00') > $this->getDateTimeInZone('00:00:00 today'))
@@ -1245,6 +1247,20 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 
 
 	/**
+	 * date/time client timezone
+	 *
+	 * @param 	string 	date/time string
+	 * @param	int		Seconds to add (subtract) to time
+	 * @return 	object 	DateTime object or false on invalid
+	 */
+	public function getDateTimeLocalZone($datetime = 'now', $modify = null)
+	{
+		$datetime = $this->getDateTimeInZone($datetime);	// registry default timezone
+		return $this->getDateTime($datetime, $modify, wp_timezone());
+	}
+
+
+	/**
 	 * set/get email to client
 	 *
 	 * @param 	bool $action
@@ -1297,5 +1313,29 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	{
 		return $this->Registration->isRegistryValue('license', 'L5', 'ge');
 	//	return $this->apply_filters('registry_value',false,'license', 'L5', 'ge');
+	}
+
+
+	/**
+	 * is license LD (developer)
+	 *
+	 * @return	bool
+	 */
+	public function isDeveloperLicense(): bool
+	{
+		return $this->Registration->isRegistryValue('license', 'LD', 'eq');
+	//	return $this->apply_filters('registry_value',false,'license', 'LD', 'eq');
+	}
+
+
+	/**
+	 * is license LU (unlimited)
+	 *
+	 * @return	bool
+	 */
+	public function isUnlimitedLicense(): bool
+	{
+		return $this->Registration->isRegistryValue('license', 'LU', 'eq');
+	//	return $this->apply_filters('registry_value',false,'license', 'LU', 'eq');
 	}
 }

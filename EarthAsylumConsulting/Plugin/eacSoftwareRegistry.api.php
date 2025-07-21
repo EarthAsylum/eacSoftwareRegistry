@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0715.1
+ * @version		25.0721.1
  */
 
 namespace EarthAsylumConsulting\Plugin;
@@ -27,6 +27,22 @@ trait eacSoftwareRegistry_api
 	 * @var string api source (api, webhook)
 	 */
 	private $api_source 		= 'API';
+
+
+	/**
+	 * Overload get_option to apply filter.
+	 *
+	 * @param	string	$optionName option name
+	 * @param	mixed	$product registration product name
+	 * @return	mixed	option value
+	 */
+	public function registrar_option($optionName, $product)
+	{
+		return $this->apply_filters($optionName,
+									$this->get_option($optionName),
+									$product
+		);
+	}
 
 
 	/**
@@ -287,8 +303,8 @@ trait eacSoftwareRegistry_api
 		$defaults = $this->apply_filters('registry_api_defaults',array_merge(self::REGISTRY_DEFAULTS, [
 			'registry_product'		=> $request['registry_product'],
 			'registry_title'		=> $request['registry_product'],
-			'registry_status'		=> $this->get_option('registrar_status'),
-			'registry_license'		=> $this->get_option('registrar_license'),
+			'registry_status'		=> $this->registrar_option('registrar_status',$request['registry_product']),
+			'registry_license'		=> $this->registrar_option('registrar_license',$request['registry_product']),
 		]),$request,$this->api_action);
 
 		// sanitize the input array
@@ -456,9 +472,28 @@ trait eacSoftwareRegistry_api
 			// if previously deactivated, update status when activating
 			if ($this->api_action == 'activate' && $defaults['registry_status'] == 'terminated')
 			{
-				$status = get_post_meta($post->ID,'_prior_status',true) ?: $this->get_option('registrar_status');
+				$status = get_post_meta($post->ID,'_prior_status',true) ?: $this->registrar_option('registrar_status',$defaults['registry_product']);
 				delete_post_meta($post->ID,'_prior_status');
 				$defaults['registry_status'] 	= $status;
+			}
+
+			// auto-update, advances the expiration date by term
+			$expires = $this->getDateTimeInZone($defaults['registry_expires'].' 23:59:59');
+			if ($post && $expires < $this->getDateTimeInZone())
+			{
+				if (isset($post->meta_input['_registry_autoupdate'])
+				&& $this->isTrue($post->meta_input['_registry_autoupdate'])
+				&& in_array($defaults['registry_status'],['trial','active']))
+				{
+				//	$term = (in_array($request['registry_status'],['pending','trial']))
+				//		? $this->registrar_option('registrar_term',$defaults['registry_product'])
+				//		: $this->registrar_option('registrar_fullterm',$defaults['registry_product']);
+					$term = $this->registrar_option('registrar_term',$defaults['registry_product']);
+					$defaults['registry_expires'] 	=
+					$request['registry_expires'] 	= $this->getDateTimeInZone($defaults['registry_expires'],"+{$term}")->format('Y-m-d');
+					$defaults['registry_status'] 	=
+					$request['registry_status'] 	= 'active';
+				}
 			}
 
 			// validate the input array
@@ -606,18 +641,15 @@ trait eacSoftwareRegistry_api
 		$status = $post->meta_input['_registry_status'];
 		if (! in_array($status,['expired','terminated']))
 		{
-			if ($this->getDateTimeInZone($post->meta_input['_registry_expires'].' 23:59:59') < $this->getDateTimeInZone())
-			{
-				$this->setApiAction('expire');
-				$post->post_status = $this->POST_STATUS_CODES['expired'];
-				$post->meta_input['_registry_status'] = 'expired';
-				wp_update_post(array(
-					'ID'			=> $post->ID,
-					'post_name'		=> $post->post_title,
-					'post_status'	=> $post->post_status,
-					'meta_input'	=> $post->meta_input,
-				),true);
-			}
+			$this->setApiAction('expire');
+			$post->post_status = $this->POST_STATUS_CODES['expired'];
+			$post->meta_input['_registry_status'] = 'expired';
+			wp_update_post(array(
+				'ID'			=> $post->ID,
+				'post_name'		=> $post->post_title,
+				'post_status'	=> $post->post_status,
+				'meta_input'	=> $post->meta_input,
+			),true);
 		}
 
 		/**
@@ -923,6 +955,12 @@ trait eacSoftwareRegistry_api
 			}
 		}
 
+		// automatically update (trial->active) and renew
+		if (isset($request['registry_autoupdate']))
+		{
+			$request['registry_autoupdate'] = $this->isTrue($request['registry_autoupdate']);
+		}
+
 		// see if transid is formatted the  way  we  like it
 		if (isset($request['registry_transid']))
 		{
@@ -1055,8 +1093,8 @@ trait eacSoftwareRegistry_api
 		if (!is_a($expiry,'DateTime'))
 		{
 			$default = (in_array($request['registry_status'],['pending','trial']))
-				? $this->get_option('registrar_term')
-				: $this->get_option('registrar_fullterm');
+				? $this->registrar_option('registrar_term',$request['registry_product'])
+				: $this->registrar_option('registrar_fullterm',$request['registry_product']);
 			try {
 				if (! $expiry = $this->isValidDate($default,'Y-m-d')) {
 					  $expiry = $this->getDateTimeInZone($request['registry_effective'],"+{$default}");
@@ -1246,8 +1284,8 @@ trait eacSoftwareRegistry_api
 		}
 
 		$refreshInterval = ($meta['registry_status'] == 'pending')
-				? $this->get_option('registrar_pending_time')
-				: $this->get_option('registrar_refresh_time');
+				? $this->registrar_option('registrar_pending_time',$meta['registry_product'])
+				: $this->registrar_option('registrar_refresh_time',$meta['registry_product']);
 
 		$valid = ($post->post_status == 'publish'); // active registration
 
@@ -1369,10 +1407,10 @@ trait eacSoftwareRegistry_api
 			'registration'			=> $meta,
 			'registrar'				=> [
 				'contact'			=> $this->getRegistrarOptions('api',$meta),
-				'cacheTime'			=> $this->get_option('registrar_cache_time'),
+				'cacheTime'			=> $this->registrar_option('registrar_cache_time',$meta['registry_product']),
 				'refreshInterval' 	=> $refreshInterval,
 				'refreshSchedule' 	=> $refreshSchedule,
-				'options'			=> $this->get_option('registrar_options'),
+				'options'			=> $this->registrar_option('registrar_options',$meta['registry_product']),
 				'notices'			=> $notices,
 				'message'			=> $message,
 			],
@@ -1425,14 +1463,16 @@ trait eacSoftwareRegistry_api
 				if ($expires >= $today)
 				{
 					$days = $today->diff($expires)->format("%a");
+					$action = (isset($meta['registry_autoupdate']) && $this->isTrue($meta['registry_autoupdate']))
+						? 'update' : 'expire';
 					if ($days < 1) {
-						$error 		= sprintf(__('Your %s registration will expire today.','softwareregistry'),$product,$days);
+						$error 		= sprintf(__('Your %s registration will %s today.','softwareregistry'),$product,$action,$days);
 					} else if ($days < 2) {
-						$warning 	= sprintf(__('Your %s registration will expire tomorrow.','softwareregistry'),$product,$days);
+						$warning 	= sprintf(__('Your %s registration will %s tomorrow.','softwareregistry'),$product,$action,$days);
 					} else if ($days < 8) {
-						$warning 	= sprintf(__('Your %s registration will expire in %s days.','softwareregistry'),$product,$days);
+						$warning 	= sprintf(__('Your %s registration will %s in %s days.','softwareregistry'),$product,$action,$days);
 					} else if ($days < 31) {
-						$info 		= sprintf(__('Your %s registration will expire in %s days.','softwareregistry'),$product,$days);
+						$info 		= sprintf(__('Your %s registration will %s in %s days.','softwareregistry'),$product,$action,$days);
 					}
 				}
 			}

@@ -7,8 +7,8 @@
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)  
-Stable tag:             1.4.5  
-Last Updated:           15-Jul-2025  
+Stable tag:             1.4.6  
+Last Updated:           21-Jul-2025  
 Requires at least:      5.8  
 Tested up to:           6.8  
 Requires EAC:           3.1  
@@ -25,6 +25,14 @@ GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry
 > {eac}SoftwareRegistry - A feature-rich and easily customized software registration and licensing server for WordPress.
 
 ### Description
+
+#### Important Update
+
+_Although this software may still be purchased on the [{eac}SoftwareRegistry web site](https://swregistry.earthasylum.com/software-registration-server/) under the existing subscription plans, as of August 2025, you may download the standard edition for free (or with [sponsorship](https://github.com/sponsors/EarthAsylum)) at this [GitHub Repository](https://github.com/EarthAsylum/eacSoftwareRegistry)._
+
+Download the latest release, ready to install, here: [eacsoftwareregistry.zip](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip).
+
+*The [End User License Agreement](https://swregistry.earthasylum.com/end-user-license-agreement/) still applies.*
 
 #### Summary
 
@@ -427,5 +435,21 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 ### Upgrade Notice
 
 Requires {eac}Doojigger version 3.1+
+
+
+### Copyright
+
+#### Copyright © 2019-2025, *EarthAsylum Consulting*, All rights reserved.
+
+__This is proprietary, copyrighted software.__
+
++   Title to the Software will remain the exclusive intellectual property of *EarthAsylum Consulting*.
+
++   You, the customer, are granted a non-exclusive, non-transferable, license to access, install, and use
+this software in accordance with the license level affirmed.
+
++   You are not permitted to share, distribute, or make available this software to any third-party.
+
+See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-license-agreement/)  
 
 
