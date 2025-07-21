@@ -641,15 +641,18 @@ trait eacSoftwareRegistry_api
 		$status = $post->meta_input['_registry_status'];
 		if (! in_array($status,['expired','terminated']))
 		{
-			$this->setApiAction('expire');
-			$post->post_status = $this->POST_STATUS_CODES['expired'];
-			$post->meta_input['_registry_status'] = 'expired';
-			wp_update_post(array(
-				'ID'			=> $post->ID,
-				'post_name'		=> $post->post_title,
-				'post_status'	=> $post->post_status,
-				'meta_input'	=> $post->meta_input,
-			),true);
+			if ($this->getDateTimeInZone($post->meta_input['_registry_expires'].' 23:59:59') < $this->getDateTimeInZone())
+			{
+				$this->setApiAction('expired');
+				$post->post_status = $this->POST_STATUS_CODES['expired'];
+				$post->meta_input['_registry_status'] = 'expired';
+				wp_update_post(array(
+					'ID'			=> $post->ID,
+					'post_name'		=> $post->post_title,
+					'post_status'	=> $post->post_status,
+					'meta_input'	=> $post->meta_input,
+				),true);
+			}
 		}
 
 		/**
@@ -1643,6 +1646,7 @@ trait eacSoftwareRegistry_api
 			case 'refreshed':
 			case 'verified':
 			case 'updated':
+			case 'expired':
 				return $action;
 			case 'verify':
 				return 'verified';
