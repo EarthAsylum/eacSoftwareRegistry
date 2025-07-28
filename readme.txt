@@ -1,12 +1,12 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.4.6
-Last Updated:           21-Jul-2025
+Stable tag:             1.5.0-RC1
+Last Updated:           28-Jul-2025
 Requires at least:      5.8
 Tested up to:           6.8
 Requires EAC:           3.1
-Requires PHP:           7.4
+Requires PHP:           8.1
 Contributors:           earthasylum@github,kevinburkholder@wordpress
 Donate link:            https://github.com/sponsors/EarthAsylum
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
@@ -20,11 +20,15 @@ GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry
 
 = Important Update =
 
-_Although this software may still be purchased on the [{eac}SoftwareRegistry web site](https://swregistry.earthasylum.com/software-registration-server/) under the existing subscription plans, as of August 2025, you may download the standard edition for free (or with [sponsorship](https://github.com/sponsors/EarthAsylum)) at this [GitHub Repository](https://github.com/EarthAsylum/eacSoftwareRegistry)._
+_Although this software may still be purchased on the
+[{eac}SoftwareRegistry web site](https://swregistry.earthasylum.com/software-registration-server/)
+under the existing subscription plans, as of August 2025, you may 
+[download the standard edition](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip 'Download eacsoftwareregistry.zip, latest release')
+for free (or with [sponsorship](https://github.com/sponsors/EarthAsylum)) at this
+[GitHub Repository](https://github.com/EarthAsylum/eacSoftwareRegistry)._
 
-Download the latest release, ready to install, here: [eacsoftwareregistry.zip](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip).
-
-*The [End User License Agreement](https://swregistry.earthasylum.com/end-user-license-agreement/) still applies.*
+*The [Copyright](#readme-copyright) and
+[End User License Agreement](https://swregistry.earthasylum.com/end-user-license-agreement/) still apply.*
 
 = Summary =
 
@@ -153,6 +157,7 @@ API parameters are passed as an array:
         'registry_sites'        => array('url',...),                //   array of valid/registered sites/uris
         'registry_transid'      => '',                              //   external transaction id
         'registry_timezone'     => '',                              //   standard timezone string (client timezone)
+        'registry_locale'       => '',                              //   standard locale/language code
     ];
 
 = API Remote Request =
@@ -278,62 +283,74 @@ The API response is a standard object. status->code is an http status, 200 indic
 
     status      ->
     (
-        'code'                  -> 200,             // HTTP status code
-        'message'               -> '(action) ok'    // (action) = 'create', 'activate', 'deactivate', 'verify', 'revise'
+        code                  -> 200,             // HTTP status code
+        message               -> '(action) ok'    // (action) = 'create', 'activate', 'deactivate', 'verify', 'revise'
     ),
     registration ->
     (
-        'registry_key'          -> string           // UUID,
-        'registry_status'       -> string,          // 'pending', 'trial', 'active', 'inactive', 'expired', 'terminated', 'invalid'
-        'registry_effective'    -> string,          // DD-MMM-YYYY effective date
-        'registry_expires'      -> string,          // DD-MMM-YYYY expiration date
-        'registry_name'         -> string,
-        'registry_email'        -> string,
-        'registry_company'      -> string,
-        'registry_address'      -> string,
-        'registry_phone'        -> string,
-        'registry_product'      -> string,
-        'registry_title'        -> string,
-        'registry_description'  -> string,
-        'registry_version'      -> string,
-        'registry_license'      -> string,
-        'registry_count'        -> int,
-        'registry_variations'   -> array,
-        'registry_options'      -> array,
-        'registry_domains'      -> array,
-        'registry_sites'        -> array,
-        'registry_transid'      -> string,
-        'registry_timezone'     -> string,
-        'registry_valid'        -> bool,            // true/false
+        registry_key          -> string           // UUID,
+        registry_status       -> string,          // 'pending', 'trial', 'active', 'inactive', 'expired', 'terminated', 'invalid'
+        registry_effective    -> string,          // DD-MMM-YYYY effective date
+        registry_expires      -> string,          // DD-MMM-YYYY expiration date
+        registry_name         -> string,
+        registry_email        -> string,
+        registry_company      -> string,
+        registry_address      -> string,
+        registry_phone        -> string,
+        registry_product      -> string,
+        registry_title        -> string,
+        registry_description  -> string,
+        registry_version      -> string,
+        registry_license      -> string,
+        registry_count        -> int,
+        registry_variations   -> array,
+        registry_options      -> array,
+        registry_domains      -> array,
+        registry_sites        -> array,
+        registry_transid      -> string,
+        registry_timezone     -> string,
+        registry_locale       -> string,
+        registry_valid        -> bool,
     ),
     registrar ->
     (
-        'contact'               -> object(
-            'name'              -> string           // Registrar Name
-            'email'             -> string           // Registrar Support Email
-            'phone'             -> string           // Registrar Telephone
-            'web'               -> string           // Registrar Web Address
+        contact               -> object(
+            name              -> string           // Registrar Name
+            email             -> string           // Registrar Support Email
+            phone             -> string           // Registrar Telephone
+            web               -> string           // Registrar Web Address
         ),
-        'cacheTime'             -> int,             // in seconds, time to cache the registration response (Default Cache Time)
-        'refreshInterval'       -> int,             // in seconds, time before refreshing the registration (Default Refresh Time)
-        'refreshSchedule'       -> string,          // 'hourly','twicedaily','daily','weekly' corresponding to refreshInterval
-        'options'               -> array(           // from settings page, registrar_options (Allow API to...)
+        timezone              -> string,          // standard timezone string
+        locale                -> string,          // WordPress locale
+        cacheTime             -> int,             // in seconds, time to cache the registration response (Default Cache Time)
+        refreshInterval       -> int,             // in seconds, time before refreshing the registration (Default Refresh Time)
+        refreshSchedule       -> string,          // 'hourly', 'twicedaily', 'daily', 'twiceweekly', 'weekly',  'twicemonthly', 'monthly' - corresponding to refreshInterval
+        options               -> array(           // from settings page, registrar_options (Allow API to...)
             'allow_set_key',
             'allow_set_status',
             'allow_set_effective',
             'allow_set_expiration',
             'allow_activation_update'
         ),
-        'notices'               -> object(
-            'info'              -> string,          // information message text
-            'warning'           -> string,          // warning message text
-            'error'             -> string,          // error message text
-            'success'           -> string,          // success message text
+        licenseCodes          -> object(          // may be changed by filter on registration server
+            L1                -> 'Lite'
+            L2                -> 'Basic'
+            L3                -> 'Standard'
+            L4                -> 'Professional'
+            L5                -> 'Enterprise'
+            LD                -> 'Developer'
+            LU                -> 'Unlimited'
         ),
-        'message'               -> string,          // html message
+        notices               -> object(
+            info              -> string,          // information message text
+            warning           -> string,          // warning message text
+            error             -> string,          // error message text
+            success           -> string,          // success message text
+        ),
+        message               -> string,          // html message
     ),
-    registryHtml                -> string,          // html (table) of human-readable registration values
-    supplemental                -> mixed,           // supplemental data/html assigned via filters (developer's discretion).
+    registryHtml              -> string,          // html (table) of human-readable registration values
+    supplemental              -> mixed,           // supplemental data/html assigned via filters (developer's discretion).
 
 = Software Distribution Development Kit =
 
@@ -428,6 +445,10 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 
 Requires {eac}Doojigger version 3.1+
 
+= 1.5 =
+
+As of version 1.5, PHP 7 is no longer supported; {eac}SoftwareRegistry requires PHP 8.1+
+
 
 == Copyright ==
 
@@ -447,11 +468,24 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 == Changelog ==
 
-= Version 1.4.6 – July 21, 2025 =
+= Version 1.5.0 – July 28, 2025 =
 
-+   Updated license.
++   Requires PHP 8.1+.
++   Use `instanceOf DateTimeInterface` instead of `is_a(DateTime)` for DateTime checks.
++   Disallow license update via api.
++   Added `registrar->timezone` to api response.
++   Added `registrar->locale` to api response.
++   Added `registrar->licenseCodes` to api response.
++   Added `registry_locale` to api request.
++   Fixed date formatting to 'd-M-Y' (as documented).
++   Tweaked response notices for renewal/update/expire.
++   Use filters (via `getRegistrarSetting()` method) to get registrar options.
 +   New `isDeveloperLicense()` and `isUnlimitedLicense()` methods.
-+   New `registry_autoupdate` (admin screen) to automatically update (trial->active) and renew on expiration.
++   New `registry_autoupdate` switch (via Registration admin screen).
+    +   Automatically advance expiration date by *Initial Term* rather than expire.
+    +   Automatically update trial to active.
++   Updated registration SDK.
++   Updated license (for github distribution).
 
 = Version 1.4.5 – July 15, 2025 =
 

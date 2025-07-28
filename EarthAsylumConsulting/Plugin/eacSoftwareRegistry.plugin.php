@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0719.1
+ * @version		25.0724.1
  */
 
 require "eacSoftwareRegistry.trait.php";
@@ -152,7 +152,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 * @var array optional registration field defaults
 	 */
 	const REGISTRY_OPTIONAL = [
-			'registry_autoupdate'	=> false,
+	//		'registry_autoupdate'	=> false,
 			'registry_transid'		=> '',
 			'registry_paydue'		=> '',
 			'registry_payamount'	=> '',
@@ -160,6 +160,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			'registry_payid'		=> '',
 			'registry_nextpay'		=> '',
 			'registry_timezone'		=> '',
+			'registry_locale'		=> '',
 	];
 
 	/**
@@ -519,7 +520,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 					// set effective date
 					if ($request['registry_effective'] == $defaults['registry_effective']) {
 						unset($request['registry_effective']);
-						$request['registry_effective'] 	= $this->setEffectiveDate($request,$this->getDateTimeInZone()->format('Y-m-d'));
+						$request['registry_effective'] 	= $this->setEffectiveDate($request,$this->getDateTimeInZone()->format('d-M-Y'));
 					}
 					// set expiration date
 					if ($request['registry_expires'] == $defaults['registry_expires']) {
@@ -537,7 +538,6 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			//else
 			if ($this->getDateTimeInZone($request['registry_expires'].' 23:59:59') < $this->getDateTimeInZone())
 			{
-				$this->logDebug([$this->getDateTimeInZone($request['registry_expires'].' 23:59:59'),$this->getDateTimeInZone()],__METHOD__);
 				$request['registry_status'] = 'expired';
 			}
 			else if ($this->getDateTimeInZone($request['registry_effective'].' 00:00:00') > $this->getDateTimeInZone('00:00:00 today'))
@@ -1208,14 +1208,32 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	 */
 	private function setClientTimezone(array $meta): void
 	{
-		$timezone =  false;
-		if (isset($meta['registry_timezone']))
+		$timezone =  $meta['registry_timezone'] ?? $meta['_registry_timezone'] ?? false;
+		if ($timezone)
 		{
 			try {
-				$timezone = new \DateTimeZone($meta['registry_timezone']);
+				$timezone = new \DateTimeZone($timezone);
 			} catch (\Throwable $e) { $timezone = false; }
 		}
-		$this->clientTimezone = (is_a($timezone,'DateTimeZone')) ? $timezone : $this->currentTimezone;
+		$this->clientTimezone = (is_a($timezone,'DateTimeZone')) ? $timezone : clone $this->currentTimezone;
+	}
+
+
+	/**
+	 * set the client local
+	 *
+	 * @param array $meta curent registry array
+	 * @return void
+	 */
+	private function setClientLocale(array $meta = []): string
+	{
+		static $clientLocal = null;
+		$locale =  $meta['registry_locale'] ?? $meta['_registry_locale'] ?? false;
+		if ($locale)
+		{
+			$clientLocal = $locale;
+		}
+		return $clientLocal ?? \get_locale();
 	}
 
 
@@ -1257,6 +1275,20 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	{
 		$datetime = $this->getDateTimeInZone($datetime);	// registry default timezone
 		return $this->getDateTime($datetime, $modify, wp_timezone());
+	}
+
+
+	/**
+	 * is a date/time object, get timezone
+	 *
+	 * @param 	object 	date/time
+	 * @return 	object 	DateTimeZone | false
+	 */
+	public function hasTimezone($datetime)
+	{
+		return ($datetime instanceOf \DateTimeInterface)
+			? $datetime->getTimezone()
+			: false;
 	}
 
 

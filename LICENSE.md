@@ -1,6 +1,6 @@
 # {eac}PLv1 - End-User License Agreement  
 Author:             [EarthAsylum Consulting](https://www.earthasylum.com)  
-Last Updated: 		21-Jul-2025  
+Last Updated: 		28-Jul-2025  
 Contributors:       [Kevin Burkholder](https://kevinburkholder.com)  
 License:            EarthAsylum Consulting Proprietary License - {eac}PLv1  
 License URI:        https://earthasylum.com/end-user-license-agreement/  

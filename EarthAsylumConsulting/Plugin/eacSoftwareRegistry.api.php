@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0721.1
+ * @version		25.0726.1
  */
 
 namespace EarthAsylumConsulting\Plugin;
@@ -27,22 +27,6 @@ trait eacSoftwareRegistry_api
 	 * @var string api source (api, webhook)
 	 */
 	private $api_source 		= 'API';
-
-
-	/**
-	 * Overload get_option to apply filter.
-	 *
-	 * @param	string	$optionName option name
-	 * @param	mixed	$product registration product name
-	 * @return	mixed	option value
-	 */
-	public function registrar_option($optionName, $product)
-	{
-		return $this->apply_filters($optionName,
-									$this->get_option($optionName),
-									$product
-		);
-	}
 
 
 	/**
@@ -136,6 +120,7 @@ trait eacSoftwareRegistry_api
 					array(
 						'methods'             => 'POST',
 						'callback'            => array( $this, 'revise_registration_key' ),
+
 						'permission_callback' => array( $this, 'api_rest_authentication' ),
 					),
 			));
@@ -303,8 +288,8 @@ trait eacSoftwareRegistry_api
 		$defaults = $this->apply_filters('registry_api_defaults',array_merge(self::REGISTRY_DEFAULTS, [
 			'registry_product'		=> $request['registry_product'],
 			'registry_title'		=> $request['registry_product'],
-			'registry_status'		=> $this->registrar_option('registrar_status',$request['registry_product']),
-			'registry_license'		=> $this->registrar_option('registrar_license',$request['registry_product']),
+			'registry_status'		=> $this->getRegistrarSetting('status',$request['registry_product']),
+			'registry_license'		=> $this->getRegistrarSetting('license',$request['registry_product']),
 		]),$request,$this->api_action);
 
 		// sanitize the input array
@@ -472,7 +457,7 @@ trait eacSoftwareRegistry_api
 			// if previously deactivated, update status when activating
 			if ($this->api_action == 'activate' && $defaults['registry_status'] == 'terminated')
 			{
-				$status = get_post_meta($post->ID,'_prior_status',true) ?: $this->registrar_option('registrar_status',$defaults['registry_product']);
+				$status = get_post_meta($post->ID,'_prior_status',true) ?: $this->getRegistrarSetting('status',$defaults['registry_product']);
 				delete_post_meta($post->ID,'_prior_status');
 				$defaults['registry_status'] 	= $status;
 			}
@@ -486,13 +471,27 @@ trait eacSoftwareRegistry_api
 				&& in_array($defaults['registry_status'],['trial','active']))
 				{
 				//	$term = (in_array($request['registry_status'],['pending','trial']))
-				//		? $this->registrar_option('registrar_term',$defaults['registry_product'])
-				//		: $this->registrar_option('registrar_fullterm',$defaults['registry_product']);
-					$term = $this->registrar_option('registrar_term',$defaults['registry_product']);
+				//		? $this->getRegistrarSetting('term',$defaults['registry_product'])
+				//		: $this->getRegistrarSetting('fullterm',$defaults['registry_product']);
+					$term = $this->getRegistrarSetting('term',$defaults['registry_product']);
 					$defaults['registry_expires'] 	=
-					$request['registry_expires'] 	= $this->getDateTimeInZone($defaults['registry_expires'],"+{$term}")->format('Y-m-d');
+					$request['registry_expires'] 	= $this->getDateTimeInZone($expires,"+{$term}")->format('d-M-Y');
 					$defaults['registry_status'] 	=
 					$request['registry_status'] 	= 'active';
+				}
+			}
+
+			// set license level
+			if (isset($request['registry_license']))
+			{
+				$request['registry_license'] = ucwords(strtolower($request['registry_license']));
+				if ( array_key_exists($request['registry_license'],$this->REGISTRY_LICENSE_LEVEL))
+				{
+					$request['registry_license'] = $this->REGISTRY_LICENSE_LEVEL[ $request['registry_license'] ];
+				}
+				else if (! in_array($request['registry_license'],$this->REGISTRY_LICENSE_LEVEL))
+				{
+					$request['registry_license'] = $defaults['registry_license'];
 				}
 			}
 
@@ -513,7 +512,7 @@ trait eacSoftwareRegistry_api
 		// custom field (not '_' prefixed)
 		if ($this->api_source == 'API')
 		{
-			$request['registry_refreshed'] = $this->getDateTimeInZone()->format('Y-m-d H:i:s T');
+			$request['registry_refreshed'] = $this->getDateTimeInZone()->format('d-M-Y H:i:s T');
 		}
 
 		/**
@@ -633,19 +632,48 @@ trait eacSoftwareRegistry_api
 			return $this->api_restResponse($post);
 		}
 
-		$this->setClientTimezone($request);
+		if (isset($request['registry_timezone']) && !empty($request['registry_timezone']))
+		{
+			$this->setClientTimezone($request);
+		}
+
+		if (isset($request['registry_locale']) && !empty($request['registry_locale']))
+		{
+			$this->setClientLocale($request);
+		}
 
 		// custom field (not '_' prefixed)
-		$post->meta_input['registry_refreshed'] = $this->getDateTimeInZone()->format('Y-m-d H:i:s T');
+		$post->meta_input['registry_refreshed'] = $this->getDateTimeInZone()->format('d-M-Y H:i:s T');
 
-		$status = $post->meta_input['_registry_status'];
-		if (! in_array($status,['expired','terminated']))
+		// check for expiration
+		$status 	= $post->meta_input['_registry_status'];
+		$expires 	= $this->getDateTimeInZone($post->meta_input['_registry_expires'].' 23:59:59');
+
+		if ($post && $expires < $this->getDateTimeInZone())
 		{
-			if ($this->getDateTimeInZone($post->meta_input['_registry_expires'].' 23:59:59') < $this->getDateTimeInZone())
+			// auto-update, advances the expiration date by term
+			if (isset($post->meta_input['_registry_autoupdate'])
+			&& $this->isTrue($post->meta_input['_registry_autoupdate'])
+			&& in_array($status,['trial','active']))
+			{
+				$term = $this->getRegistrarSetting('term',$post->meta_input['_registry_product']);
+				$post->meta_input['_registry_expires'] 	= $this->getDateTimeInZone($expires,"+{$term}")->format('d-M-Y');
+				$post->meta_input['_registry_status'] 	= 'active';
+				$post->post_status = $this->POST_STATUS_CODES['active'];
+				wp_update_post(array(
+					'ID'			=> $post->ID,
+					'post_name'		=> $post->post_title,
+					'post_status'	=> $post->post_status,
+					'meta_input'	=> $post->meta_input,
+				),true);
+			}
+			else
+			// expired
+			if (!in_array($status,['expired','terminated']))
 			{
 				$this->setApiAction('expired');
-				$post->post_status = $this->POST_STATUS_CODES['expired'];
 				$post->meta_input['_registry_status'] = 'expired';
+				$post->post_status = $this->POST_STATUS_CODES['expired'];
 				wp_update_post(array(
 					'ID'			=> $post->ID,
 					'post_name'		=> $post->post_title,
@@ -745,7 +773,6 @@ trait eacSoftwareRegistry_api
 	 */
 	public function sanitizeRequest(array $request, array $defaults, bool $chkRequired = false): array
 	{
-	//	$request = array_filter($request);
 		foreach ($defaults as $name => $default)
 		{
 			if (isset($request[$name]))
@@ -843,19 +870,7 @@ trait eacSoftwareRegistry_api
 		}
 
 		// set license level
-		if (isset($request['registry_license']))
-		{
-			$request['registry_license'] = ucwords(strtolower($request['registry_license']));
-			if ( array_key_exists($request['registry_license'],$this->REGISTRY_LICENSE_LEVEL))
-			{
-				$request['registry_license'] = $this->REGISTRY_LICENSE_LEVEL[ $request['registry_license'] ];
-			}
-			else if (! in_array($request['registry_license'],$this->REGISTRY_LICENSE_LEVEL))
-			{
-				$request['registry_license'] = $defaults['registry_license'];
-			}
-		}
-		else
+		if (!isset($request['registry_license']))
 		{
 			$request['registry_license'] = $defaults['registry_license'];
 		}
@@ -888,6 +903,10 @@ trait eacSoftwareRegistry_api
 		{
 			$request['registry_status'] 	= 'future';
 		}
+
+		/*
+		 * Remaining values may be updated unconditionally through the api
+		 */
 
 		// set variations
 		if (isset($request['registry_variations']) && is_array($request['registry_variations']))
@@ -948,7 +967,7 @@ trait eacSoftwareRegistry_api
 		// count is empty or numeric
 		if (isset($request['registry_count']))
 		{
-			$request['registry_count'] 		= intval($request['registry_count']) ?: $defaults['registry_count'];
+			$request['registry_count'] 		= /* intval($request['registry_count']) ?: */ $defaults['registry_count'];
 		}
 		if ($limit = $licenseLimitations['count'])
 		{
@@ -958,13 +977,24 @@ trait eacSoftwareRegistry_api
 			}
 		}
 
-		// automatically update (trial->active) and renew
-		if (isset($request['registry_autoupdate']))
+		// client timezone
+		if (isset($request['registry_timezone']) && !empty($request['registry_timezone']))
 		{
-			$request['registry_autoupdate'] = $this->isTrue($request['registry_autoupdate']);
+			$this->setClientTimezone($request);
 		}
 
-		// see if transid is formatted the  way  we  like it
+		if (isset($request['registry_locale']) && !empty($request['registry_locale']))
+		{
+			$this->setClientLocale($request);
+		}
+
+		// automatically update (trial->active) and renew - set in admin only
+		if (isset($request['registry_autoupdate']))
+		{
+			unset($request['registry_autoupdate']); // = $this->isTrue($request['registry_autoupdate']);
+		}
+
+		// see if transid is formatted the way we like it
 		if (isset($request['registry_transid']))
 		{
 			$transid = explode('|',$request['registry_transid']);
@@ -1001,7 +1031,7 @@ trait eacSoftwareRegistry_api
 			try {
 				$paydate = $this->getDateTimeInZone($request['registry_paydate'].' 23:59:59');
 			} catch (\Throwable $e) { $paydate = false; }
-			$request['registry_paydate'] = (is_a($paydate,'DateTime')) ? $paydate->format('Y-m-d') : null;
+			$request['registry_paydate'] = ($this->hasTimezone($paydate)) ? $paydate->format('d-M-Y') : null;
 		}
 		else
 		{
@@ -1017,7 +1047,7 @@ trait eacSoftwareRegistry_api
 					$paydate = $this->getDateTimeInZone($request['registry_nextpay'].' 23:59:59');
 				} catch (\Throwable $e) { $paydate = false; }
 			}
-			$request['registry_nextpay'] = (is_a($paydate,'DateTime')) ? $paydate->format('Y-m-d') : '';
+			$request['registry_nextpay'] = ($this->hasTimezone($paydate)) ? $paydate->format('d-M-Y') : '';
 		}
 
 		/**
@@ -1042,7 +1072,7 @@ trait eacSoftwareRegistry_api
 	 *
 	 * @param array $request api request parameters
 	 * @param string $default default date
-	 * @return string date Y-m-d
+	 * @return string date d-M-Y
 	 */
 	private function setEffectiveDate(array $request, $default=null)
 	{
@@ -1054,14 +1084,14 @@ trait eacSoftwareRegistry_api
 			} catch (\Throwable $e) { $effective = false; }
 		}
 
-		if (!is_a($effective,'DateTime') && !empty($default))
+		if (!$this->hasTimezone($effective) && !empty($default))
 		{
 			try {
 				$effective = $this->getDateTimeInZone($default);
 			} catch (\Throwable $e) { $effective = false; }
 		}
 
-		return (is_a($effective,'DateTime')) ? $effective->format('Y-m-d') : $this->getDateTimeInZone()->format('Y-m-d');
+		return ($this->hasTimezone($effective)) ? $effective->format('d-M-Y') : $this->getDateTimeInZone()->format('d-M-Y');
 	}
 
 
@@ -1070,7 +1100,7 @@ trait eacSoftwareRegistry_api
 	 *
 	 * @param array $request api request parameters
 	 * @param string $default default term
-	 * @return string date Y-m-d
+	 * @return string date d-M-Y
 	 */
 	private function setExpirationDate(array $request, $default=null)
 	{
@@ -1078,34 +1108,37 @@ trait eacSoftwareRegistry_api
 		if (isset($request['registry_expires']) && !empty($request['registry_expires']) && $this->isRegistrarOption('allow_set_expiration'))
 		{
 			try {
-				if (! $expiry = $this->isValidDate($request['registry_expires'],'Y-m-d')) {
+				if (! $expiry = $this->isValidDate($request['registry_expires'], 'd-M-Y', $this->currentTimezone) ?:
+								$this->isValidDate($request['registry_expires'], 'Y-m-d', $this->currentTimezone)) {
 					  $expiry = $this->getDateTimeInZone($request['registry_effective'],"+{$request['registry_expires']}");
 				}
 			} catch (\Throwable $e) { $expiry = false; }
 		}
 
-		if (!is_a($expiry,'DateTime') && !empty($default))
+		if (!$this->hasTimezone($expiry) && !empty($default))
 		{
 			try {
-				if (! $expiry = $this->isValidDate($default,'Y-m-d')) {
+				if (! $expiry = $this->isValidDate($default, 'd-M-Y', $this->currentTimezone) ?:
+								$this->isValidDate($default, 'Y-m-d', $this->currentTimezone)) {
 					  $expiry = $this->getDateTimeInZone($request['registry_effective'],"+{$default}");
 				}
 			} catch (\Throwable $e) { $expiry = false; }
 		}
 
-		if (!is_a($expiry,'DateTime'))
+		if (!$this->hasTimezone($expiry))
 		{
 			$default = (in_array($request['registry_status'],['pending','trial']))
-				? $this->registrar_option('registrar_term',$request['registry_product'])
-				: $this->registrar_option('registrar_fullterm',$request['registry_product']);
+				? $this->getRegistrarSetting('term',$request['registry_product'])
+				: $this->getRegistrarSetting('fullterm',$request['registry_product']);
 			try {
-				if (! $expiry = $this->isValidDate($default,'Y-m-d')) {
+				if (! $expiry = $this->isValidDate($default, 'd-M-Y', $this->currentTimezone) ?:
+								$this->isValidDate($default, 'Y-m-d', $this->currentTimezone)) {
 					  $expiry = $this->getDateTimeInZone($request['registry_effective'],"+{$default}");
 				}
 			} catch (\Throwable $e) { $expiry = false; }
 		}
 
-		return (is_a($expiry,'DateTime')) ? $expiry->format('Y-m-d') : $request['registry_effective'];
+		return ($this->hasTimezone($expiry)) ? $expiry->format('d-M-Y') : $request['registry_effective'];
 	}
 
 
@@ -1163,7 +1196,7 @@ trait eacSoftwareRegistry_api
 
 
 	/**
-	 * check registrar_options option or override for webhooks
+	 * check registrar_options array for specific option
 	 *
 	 * @param 	string 	option to check
 	 * @return 	bool|string (truthy)
@@ -1185,6 +1218,31 @@ trait eacSoftwareRegistry_api
 		 * @return	bool
 		 */
 		return  $this->apply_filters("registrar_{$option}",$bool);
+	}
+
+
+	/**
+	 * Overload get_option to apply filter.
+	 *
+	 * @param	string	$optionName option name
+	 * @param	string	$product registration product name
+	 * @return	mixed	option value
+	 */
+	public function getRegistrarSetting($optionName, $product)
+	{
+		$optionName = 'registrar_'.$optionName;
+		/**
+		 * filter {classname}_registrar_{option}
+		 * filter registrar setting
+		 * @param	string	$optionName setting name
+		 * @param	mixed	option value
+		 * @param	string	$product registration product name
+		 * @return	mixed
+		 */
+		return $this->apply_filters($optionName,
+									$this->get_option($optionName),
+									$product
+		);
 	}
 
 
@@ -1287,8 +1345,8 @@ trait eacSoftwareRegistry_api
 		}
 
 		$refreshInterval = ($meta['registry_status'] == 'pending')
-				? $this->registrar_option('registrar_pending_time',$meta['registry_product'])
-				: $this->registrar_option('registrar_refresh_time',$meta['registry_product']);
+				? $this->getRegistrarSetting('pending_time',$meta['registry_product'])
+				: $this->getRegistrarSetting('refresh_time',$meta['registry_product']);
 
 		$valid = ($post->post_status == 'publish'); // active registration
 
@@ -1410,10 +1468,15 @@ trait eacSoftwareRegistry_api
 			'registration'			=> $meta,
 			'registrar'				=> [
 				'contact'			=> $this->getRegistrarOptions('api',$meta),
-				'cacheTime'			=> $this->registrar_option('registrar_cache_time',$meta['registry_product']),
+				'timezone' 			=> $this->currentTimezone->getName(),
+				'locale' 			=> \get_locale(),
+				'cacheTime'			=> $this->getRegistrarSetting('cache_time',$meta['registry_product']),
 				'refreshInterval' 	=> $refreshInterval,
 				'refreshSchedule' 	=> $refreshSchedule,
-				'options'			=> $this->registrar_option('registrar_options',$meta['registry_product']),
+				'options'			=> $this->getRegistrarSetting('options',$meta['registry_product']),
+				'licenseCodes'		=> $this->apply_filters('settings_license_levels',
+													array_flip($this->REGISTRY_LICENSE_LEVEL)
+										),
 				'notices'			=> $notices,
 				'message'			=> $message,
 			],
@@ -1441,42 +1504,32 @@ trait eacSoftwareRegistry_api
 		}
 		else
 		{
-			$today 	= $this->getDateTimeInZone('23:59:59 today');
-			$renewal= false;
+			$today 	= $this->getDateTimeClientZone('23:59:59 today');
+			$update = false;
 			if (isset($meta['registry_nextpay']) && !empty($meta['registry_nextpay']))
 			{
 				try {
-					$renewal= $this->getDateTimeInZone($meta['registry_nextpay'].' 23:59:59');
-				} catch (\Throwable $e) { $renewal = false; }
+					$update = $this->getDateTimeClientZone($meta['registry_nextpay'].' 23:59:59');
+					$action = 'renew';
+				} catch (\Throwable $e) { $update = false; }
 			}
-			if (is_a($renewal,'DateTime') && $renewal >= $today)
+			if (!$this->hasTimezone($update))
 			{
-				$days = $today->diff($renewal)->format("%a");
+				$update = $this->getDateTimeClientZone($meta['registry_expires'].' 23:59:59');
+				$action = (isset($meta['registry_autoupdate']) && $this->isTrue($meta['registry_autoupdate']))
+					? 'update' : 'expire';
+			}
+			if ($update && $update >= $today)
+			{
+				$days = $today->diff($update)->format("%a");
+				$date = $update->format("d-M-Y");
+				$time = $update->format("g:ia (T)");
 				if ($days < 1) {
-					$info 	= sprintf(__('Your %s registration is scheduled to renew today.','softwareregistry'),$product,$days);
-				} else if ($days < 2) {
-					$info 	= sprintf(__('Your %s registration is scheduled to renew tomorrow.','softwareregistry'),$product,$days);
-				} else if ($days < 31) {
-					$info 	= sprintf(__('Your %s registration is scheduled to renew in %s days.','softwareregistry'),$product,$days);
-				}
-			}
-			else
-			{
-				$expires = $this->getDateTimeInZone($meta['registry_expires'].' 23:59:59');
-				if ($expires >= $today)
-				{
-					$days = $today->diff($expires)->format("%a");
-					$action = (isset($meta['registry_autoupdate']) && $this->isTrue($meta['registry_autoupdate']))
-						? 'update' : 'expire';
-					if ($days < 1) {
-						$error 		= sprintf(__('Your %s registration will %s today.','softwareregistry'),$product,$action,$days);
-					} else if ($days < 2) {
-						$warning 	= sprintf(__('Your %s registration will %s tomorrow.','softwareregistry'),$product,$action,$days);
-					} else if ($days < 8) {
-						$warning 	= sprintf(__('Your %s registration will %s in %s days.','softwareregistry'),$product,$action,$days);
-					} else if ($days < 31) {
-						$info 		= sprintf(__('Your %s registration will %s in %s days.','softwareregistry'),$product,$action,$days);
-					}
+					$error 		= sprintf(__('Your %s registration is expected to %s at %s.','softwareregistry'),$product,$action,$time);
+				} else if ($days < 8) {
+					$warning 	= sprintf(__('Your %s registration is expected to %s at %s on %s.','softwareregistry'),$product,$action,$time,$date);
+				} else if ($days < 15) {
+					$info 		= sprintf(__('Your %s registration is expected to %s at %s on %s.','softwareregistry'),$product,$action,$time,$date);
 				}
 			}
 		}

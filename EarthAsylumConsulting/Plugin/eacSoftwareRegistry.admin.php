@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0719.1
+ * @version		25.0724.1
  */
 
 trait eacSoftwareRegistry_administration
@@ -161,7 +161,7 @@ trait eacSoftwareRegistry_administration
 			.column-registry_status {width: 6.5em;}
 		<?php
 		$style = ob_get_clean();
-		wp_add_inline_style( $styleId, $style );
+		wp_add_inline_style( $styleId, $this->minifyString($style) );
 
 		ob_start();
 		?>
@@ -539,7 +539,7 @@ trait eacSoftwareRegistry_administration
 				'type'		=>	'number',
 				'label'		=>	__('License Count','eacSoftwareRegistry'),
 				'info'		=>	__('Number of licenses (users/seats/devices) included','eacSoftwareRegistry'),
-				'attributes'=>	["placeholder='unlimited'"]
+				'attributes'=>	['placeholder'=>'unlimited','min=0','step=1','max=99999999'],
 			],
 			'registry_name'			=> [
 				'type'		=>	'text',
@@ -594,6 +594,11 @@ trait eacSoftwareRegistry_administration
 				'label'		=>	__('Transaction ID','eacSoftwareRegistry'),
 				'info'		=>	__('External order transaction','eacSoftwareRegistry')
 			],
+			'_client_locale'		=> [
+				'type'		=>	'disabled',
+				'label'		=>	__('Locale','eacSoftwareRegistry'),
+				'info'		=>	__('Client locale &amp; time zone','eacSoftwareRegistry')
+			],
 		);
 
 		// if software_taxonomy set "force" flag, and is active
@@ -627,7 +632,16 @@ trait eacSoftwareRegistry_administration
 	{
 		foreach ($fields as $key => $fieldMeta)
 		{
-			$fieldValue = maybe_unserialize( get_post_meta($post->ID,"_{$key}",true) );
+			if ($key == '_client_locale')
+			{
+				$fieldValue = trim(get_post_meta($post->ID,"_registry_locale",true).' | '.get_post_meta($post->ID,"_registry_timezone",true),' |');
+				if (empty($fieldValue)) continue;
+			}
+			else
+			{
+				$fieldValue = maybe_unserialize( get_post_meta($post->ID,"_{$key}",true) );
+			}
+
 			if (empty($fieldValue) && isset($fieldMeta['default']))
 			{
 				$fieldValue = $fieldMeta['default'];
@@ -639,6 +653,12 @@ trait eacSoftwareRegistry_administration
 					$fieldValue = implode("\n",$fieldValue);
 				} else if (is_object($fieldValue)) {
 					$fieldValue = $this->implode_with_keys("\n",(array)$fieldValue);
+				}
+			}
+			else
+			{
+				if ($this->isValidDate($fieldValue,'d-M-Y')) {
+					$fieldValue = $this->getDateTimeInZone($fieldValue)->format('Y-m-d');
 				}
 			}
 			if ($key == 'registry_product' && $fieldMeta['type'] == 'select')

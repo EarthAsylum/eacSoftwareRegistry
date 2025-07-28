@@ -7,8 +7,7 @@ namespace EarthAsylumConsulting\Extensions;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2022 EarthAsylum Consulting <www.EarthAsylum.com>
- * @version		1.x
+ * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.EarthAsylum.com>
  * @see 		https://eacDoojigger.earthasylum.com/phpdoc/
  * @uses 		\EarthAsylumConsulting\Traits\swRegistrationUI;
  */
@@ -25,7 +24,7 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 	/**
 	 * @var string extension version
 	 */
-	const VERSION	= '25.0419.1';
+	const VERSION	= '25.0723.1';
 
 	/**
 	 * @var ALIAS constant ($this->Registration->...)
@@ -60,7 +59,14 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 		// allow external extensions if license is L3 (standard) or better
 		$this->add_filter( 'allow_external_extensions', function()
 			{
-				return $this->isRegistryvalue('license', 'L3', 'ge');
+				return match ($this->isRegistryvalue('license')) {
+					'L1'			=> false, 	// lite
+					'L2'			=> 1, 		// basic
+					'L3'			=> 4, 		// standard
+					'L4'			=> 8, 		// profesional
+					'L5'			=> true,	// enterprise
+					'LD','LU'		=> true, 	// developer,unlimited
+				};
 			}
 		);
 
