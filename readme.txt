@@ -27,7 +27,7 @@ under the existing subscription plans, as of August 2025, you may
 for free (or with [sponsorship](https://github.com/sponsors/EarthAsylum)) at this
 [GitHub Repository](https://github.com/EarthAsylum/eacSoftwareRegistry)._
 
-*The [Copyright](#readme-copyright) and
+*The [Copyright](#copyright) and
 [End User License Agreement](https://swregistry.earthasylum.com/end-user-license-agreement/) still apply.*
 
 = Summary =

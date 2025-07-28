@@ -17,6 +17,7 @@
  * Requires at least:	5.8
  * Tested up to: 		6.8
  * Requires PHP:		8.1
+ * Requires Plugins: 	eacDoojigger
  * Plugin URI:			https://swregistry.earthasylum.com/
  * Update URI: 			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.json
  * Author:				EarthAsylum Consulting
