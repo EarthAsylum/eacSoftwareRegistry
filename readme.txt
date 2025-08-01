@@ -1,8 +1,8 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.5.0-RC1
-Last Updated:           28-Jul-2025
+Stable tag:             1.5.0
+Last Updated:           01-Aug-2025
 Requires at least:      5.8
 Tested up to:           6.8
 Requires EAC:           3.1
@@ -468,7 +468,7 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 == Changelog ==
 
-= Version 1.5.0 – July 28, 2025 =
+= Version 1.5.0 – August 1, 2025 =
 
 +   Requires PHP 8.1+.
 +   Use `instanceOf DateTimeInterface` instead of `is_a(DateTime)` for DateTime checks.

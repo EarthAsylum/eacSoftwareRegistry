@@ -39,6 +39,5 @@ IF YOU DO NOT AGREE TO THESE TERMS:
 
 ### For the complete license agreement
 
-+   See the `{eac)PLv1` folder distributed with this software.
 +   Visit [EarthAsylum Consulting EULA](https://earthasylum.com/end-user-license-agreement/) on the web.
 
