@@ -31,7 +31,7 @@ GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry
 _Although this software may still be purchased on the
 [{eac}SoftwareRegistry web site](https://swregistry.earthasylum.com/software-registration-server/)
 under the existing subscription plans, as of August 2025, you may 
-[download the standard edition](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip 'Download eacsoftwareregistry.zip, latest release')
+[download the basic edition](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip 'Download eacsoftwareregistry.zip, latest release')
 for free (or with [sponsorship](https://github.com/sponsors/EarthAsylum)) at this
 [GitHub Repository](https://github.com/EarthAsylum/eacSoftwareRegistry)._
 

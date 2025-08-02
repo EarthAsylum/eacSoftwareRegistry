@@ -24,7 +24,7 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 	/**
 	 * @var string extension version
 	 */
-	const VERSION	= '25.0723.1';
+	const VERSION	= '25.0802.1';
 
 	/**
 	 * @var ALIAS constant ($this->Registration->...)
@@ -61,7 +61,7 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 			{
 				return match ($this->isRegistryvalue('license')) {
 					'L1'			=> false, 	// lite
-					'L2'			=> 1, 		// basic
+					'L2'			=> 2, 		// basic
 					'L3'			=> 4, 		// standard
 					'L4'			=> 8, 		// profesional
 					'L5'			=> true,	// enterprise
