@@ -21,14 +21,20 @@ GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry
 = Important Update =
 
 _Although this software may still be purchased on the
-[{eac}SoftwareRegistry web site](https://swregistry.earthasylum.com/software-registration-server/)
-under the existing subscription plans, as of August 2025, you may 
-[download the basic edition](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip 'Download eacsoftwareregistry.zip, latest release')
-for free (or with [sponsorship](https://github.com/sponsors/EarthAsylum)) at this
-[GitHub Repository](https://github.com/EarthAsylum/eacSoftwareRegistry)._
+[{eac}SoftwareRegistry web site][website]
+under the existing subscription plans, as of August 2025, you may
+[download the basic edition][download] for free (or with [sponsorship])
+available at this [GitHub Repository]._
 
 *The [Copyright](#copyright) and
 [End User License Agreement](https://swregistry.earthasylum.com/end-user-license-agreement/) still apply.*
+
+:package: [Download eacSoftwareRegistry.zip][Download]
+
+[website]:			https://swregistry.earthasylum.com/software-registration-server/
+[sponsorship]:		https://github.com/sponsors/EarthAsylum
+[download]:			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip "Download eacSoftwareRegistry.zip, latest release, ready to install"
+[GitHub Repository]:https://github.com/EarthAsylum/eacSoftwareRegistry
 
 = Summary =
 
@@ -516,7 +522,7 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 +   Compatible with WordPress 6.7 and {eac}Doojigger 3.0.
 +   Added new `supplemental` key to registration api return object (developer discretion).
     +   `api_registration_supplemental` filter.
-    +   `client_api_supplemental` filter with message merge. 
+    +   `client_api_supplemental` filter with message merge.
 +   Simplified api error processing.
 +   Removed extraneous debugging.
 +   Add REST origin (via `getRequestOrigin()`) to `allowed_http_origins` filter for CORS authorization.

@@ -1,7 +1,8 @@
-## {eac}SoftwareRegistry Software Registration Server  
+## {eac}SoftwareRegistry Software Registration Server
 [![EarthAsylum Consulting](https://img.shields.io/badge/EarthAsylum-Consulting-0?&labelColor=6e9882&color=707070)](https://earthasylum.com/)
 [![WordPress](https://img.shields.io/badge/WordPress-Plugins-grey?logo=wordpress&labelColor=blue)](https://wordpress.org/plugins/search/EarthAsylum/)
 [![eacDoojigger](https://img.shields.io/badge/Requires-%7Beac%7DDoojigger-da821d)](https://eacDoojigger.earthasylum.com/)
+[![Sponsorship](https://img.shields.io/static/v1?label=Sponsorship&message=%E2%9D%A4&logo=GitHub&color=bf3889)](https://github.com/sponsors/EarthAsylum)
 
 <details><summary>Plugin Header</summary>
 
@@ -29,14 +30,20 @@ GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry
 #### Important Update
 
 _Although this software may still be purchased on the
-[{eac}SoftwareRegistry web site](https://swregistry.earthasylum.com/software-registration-server/)
-under the existing subscription plans, as of August 2025, you may 
-[download the basic edition](https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip 'Download eacsoftwareregistry.zip, latest release')
-for free (or with [sponsorship](https://github.com/sponsors/EarthAsylum)) at this
-[GitHub Repository](https://github.com/EarthAsylum/eacSoftwareRegistry)._
+[{eac}SoftwareRegistry web site][website]
+under the existing subscription plans, as of August 2025, you may
+[download the basic edition][download] for free (or with [sponsorship])
+available at this [GitHub Repository]._
 
 *The [Copyright](#copyright) and
 [End User License Agreement](https://swregistry.earthasylum.com/end-user-license-agreement/) still apply.*
+
+:package: [Download eacSoftwareRegistry.zip][Download]
+
+[website]:			https://swregistry.earthasylum.com/software-registration-server/
+[sponsorship]:		https://github.com/sponsors/EarthAsylum
+[download]:			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip "Download eacSoftwareRegistry.zip, latest release, ready to install"
+[GitHub Repository]:https://github.com/EarthAsylum/eacSoftwareRegistry
 
 #### Summary
 
