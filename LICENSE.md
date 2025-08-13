@@ -1,6 +1,6 @@
 # {eac}PLv1 - End-User License Agreement  
 Author:             [EarthAsylum Consulting](https://www.earthasylum.com)  
-Last Updated: 		28-Jul-2025  
+Last Updated: 		13-Aug-2025  
 Contributors:       [Kevin Burkholder](https://kevinburkholder.com)  
 License:            EarthAsylum Consulting Proprietary License - {eac}PLv1  
 License URI:        https://earthasylum.com/end-user-license-agreement/  
@@ -41,3 +41,33 @@ IF YOU DO NOT AGREE TO THESE TERMS:
 
 +   Visit [EarthAsylum Consulting EULA](https://earthasylum.com/end-user-license-agreement/) on the web.
 
+
+## License Levels
+
+### Basic
+
++   Supports up to 50 active registrations
++   Supports 2 extension plugins
++   Install on 1 domain/site
++   All future updates included
+
+### Standard
+
++   Supports up to 100 active registrations
++   Supports 4 extension plugins
++   Install on 1 domain/site
++   All future updates included
+
+### Professional
+
++   Supports up to 250 active registrations
++   Supports 8 extension plugins
++   Install on 2 domains/sites (Production & Development)
++   All future updates included
+
+### Enterprise
+
++   Supports up to 500 active registrations
++   Supports all extension plugins
++   Install on 2 domains/sites (Production & Development)
++   All future updates included
