@@ -1,10 +1,10 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.5.0
-Last Updated:           01-Aug-2025
+Stable tag:             1.5.2
+Last Updated:           20-Jul-2026
 Requires at least:      5.8
-Tested up to:           6.8
+Tested up to:           7.0
 Requires EAC:           3.1
 Requires PHP:           8.1
 Contributors:           earthasylum@github,kevinburkholder@wordpress
@@ -458,7 +458,7 @@ As of version 1.5, PHP 7 is no longer supported; {eac}SoftwareRegistry requires 
 
 == Copyright ==
 
-= Copyright © 2019-2025, *EarthAsylum Consulting*, All rights reserved. =
+= Copyright © 2019-2026, *EarthAsylum Consulting*, All rights reserved. =
 
 __This is proprietary, copyrighted software.__
 
@@ -473,6 +473,15 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.5.2 – July 20, 2026 =
+
++   Compatible with WordPress 7.0.
++	Fixed potential taxonomy error.
+
+= Version 1.5.1 – November 29, 2025 =
+
++	Add auto-update icon to status on registration list.
 
 = Version 1.5.0 – August 1, 2025 =
 

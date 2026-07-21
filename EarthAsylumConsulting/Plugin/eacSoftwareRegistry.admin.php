@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0724.1
+ * @version		25.1129.1
  */
 
 trait eacSoftwareRegistry_administration
@@ -299,6 +299,11 @@ trait eacSoftwareRegistry_administration
 			case 'registry_status':
 				$value = get_post_meta($post_id, "_{$column}", true);
 				echo array_search($value,$this->REGISTRY_STATUS_CODES) ?: $value;
+				$auto = get_post_meta($post_id, "_registry_autoupdate", true);
+				if ($this->isTrue($auto) && in_array($value,['trial','active']))
+				{
+					echo '<span class="dashicons dashicons-update" style="font-size: 16px"></span>';
+				}
 				break;
 			case 'registry_effective':
 				echo $this->getDateTimeInZone( get_post_meta($post_id, "_{$column}", true) )->format('d-M-Y');
@@ -610,6 +615,7 @@ trait eacSoftwareRegistry_administration
 			);
 			foreach ($terms as $term)
 			{
+				$term = (object)$term;
 				$options[$term->slug] = $term->slug;
 			}
 			$fieldValue = sanitize_title( get_post_meta($post->ID,"_registry_product",true) );
