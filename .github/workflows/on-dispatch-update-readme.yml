@@ -81,7 +81,7 @@ jobs:
             --exclude='package-lock.json' \
         ./ ./.${WORKFLOW}/${REPO_NAME}/
         cd .${WORKFLOW}
-        zip -r ../${REPO_NAME}.${VERSION}.zip-x ./${REPO_NAME}
+        zip -r ../${REPO_NAME}.${VERSION}-x.zip ./${REPO_NAME}
         pwd
 
     # Upload {plugin-name}.{version}.zip to github release
