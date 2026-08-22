@@ -81,11 +81,11 @@ jobs:
             --exclude='package-lock.json' \
         ./ ./.${WORKFLOW}/${REPO_NAME}/
         cd .${WORKFLOW}
-        zip -r ../${REPO_NAME}.${VERSION}.zip ./${REPO_NAME}
+        zip -r ../${REPO_NAME}.${VERSION}.zip-x ./${REPO_NAME}
 
     # Upload {plugin-name}.{version}.zip to github release
     - name: Upload Release Asset
       run: |
-        gh release upload ${TAG_NAME} ${REPO_NAME}.${VERSION}.zip-x --clobber
+        gh release upload ${TAG_NAME} ${REPO_NAME}.${VERSION}-x.zip --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
