@@ -59,6 +59,7 @@ jobs:
       uses: 10up/action-wordpress-plugin-asset-update@stable
       env:
         ASSETS_DIR: .wp-assets
+        IGNORE_OTHER_FILES: true
         SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
         SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
 
@@ -84,8 +85,7 @@ jobs:
 
     # Upload {plugin-name}.{version}.zip to github release
     - name: Upload Release Asset
-      uses: softprops/action-gh-release@v3
+      run: |
+        gh release upload ${TAG_NAME} ${REPO_NAME}.${VERSION}.zip-x --clobber
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        files: ${{ github.workspace }}/${{ env.REPO_NAME }}.${{ env.VERSION }}.zip
