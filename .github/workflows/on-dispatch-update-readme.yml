@@ -82,6 +82,7 @@ jobs:
         ./ ./.${WORKFLOW}/${REPO_NAME}/
         cd .${WORKFLOW}
         zip -r ../${REPO_NAME}.${VERSION}.zip-x ./${REPO_NAME}
+        cd ..
 
     # Upload {plugin-name}.{version}.zip to github release
     - name: Upload Release Asset
