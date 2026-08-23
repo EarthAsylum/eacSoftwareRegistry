@@ -2,7 +2,7 @@
 #   Deploy plugin to wordpress.org repository.
 #   Adds {plugin-name}.{version}.zip to release assets.
 #
-# Version: 26.0822.1
+# Version: 26.0823.1
 
 name: On Release, deploy plugin
 on:
@@ -13,3 +13,5 @@ on:
 jobs:
   On-Deploy-Plugin:
     uses: EarthAsylum/Workflows/.github/workflows/deploy-wp-plugin.yml@main
+    with:
+      wp_assets: '.wp-assets'
