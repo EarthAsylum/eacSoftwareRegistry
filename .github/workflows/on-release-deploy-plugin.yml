@@ -12,4 +12,4 @@ on:
 
 jobs:
   On-Deploy-Plugin:
-    uses: EarthAsylum/Workflows/deploy-wp-plugin.yml@main
+    uses: EarthAsylum/Workflows/.github/workflows/deploy-wp-plugin.yml@main
