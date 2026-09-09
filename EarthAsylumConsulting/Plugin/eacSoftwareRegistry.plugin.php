@@ -9,8 +9,8 @@ namespace EarthAsylumConsulting\Plugin;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0724.1
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		26.0909.1
  */
 
 require "eacSoftwareRegistry.trait.php";
@@ -281,6 +281,10 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	{
 		parent::addActionsAndFilters();
 
+		// allow advanced mode
+		$this->add_filter('allow_advanced_mode',		array( $this, 'allow_advanced_mode'), PHP_INT_MAX);
+		$this->allowAdvancedMode(true);
+
 		// when updating custom post via edit, api, or  webhook
 		add_action( 'pre_post_update', 					array($this, 'pre_update_custom_post'), 10,2 );
 
@@ -291,7 +295,6 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 		{
 			$this->admin_addActionsAndFilters();
 		}
-		$this->allowAdvancedMode(true);
 	}
 
 
@@ -1313,6 +1316,18 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 
 
 	/**
+	 * is license L2 (basic) or better
+	 *
+	 * @return	bool
+	 */
+	public function isBasicLicense(): bool
+	{
+		return $this->Registration->isRegistryValue('license', 'L2', 'ge');
+	//	return $this->apply_filters('registry_value',false,'license', 'L2', 'ge');
+	}
+
+
+	/**
 	 * is license L3 (standard) or better
 	 *
 	 * @return	bool
@@ -1369,5 +1384,46 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 	{
 		return $this->Registration->isRegistryValue('license', 'LU', 'eq');
 	//	return $this->apply_filters('registry_value',false,'license', 'LU', 'eq');
+	}
+
+
+	/**
+	 * alllow advanced mode - aids in complexity and/or licensing limits.
+	 * standard license or better to enable advanced mose
+	 *
+	 * @param bool $allow - allow or not
+	 * @return	bool
+	 */
+	public function allow_advanced_mode(bool $allow): bool
+	{
+		return $allow && $this->isStandardLicense();
+	}
+
+
+	/**
+	 * set advanced mode - aids in complexity and/or licensing limits.
+	 * allow settings 'advanced' attribute of 'standard', 'professional', 'enterprise'
+	 *
+	 * @param bool $is - is or is not
+	 * @param string $what - what is in advanced mode (global, settings, ...)
+	 * @param string $level - what level is in advanced mode (default, basic, standard, pro)
+	 * @return	void
+	 */
+	public function setAdvancedMode( $is = true, ?string $what = null, ?string $level = null): void
+	{
+		if ($is === true && $what == 'settings')
+		{
+			// set after extensions have loaded (including registration extension)
+			$this->add_action('extensions_loaded', function()
+				{
+					$this->advanced_mode['settings']['standard'] 		= $this->isStandardLicense();
+					$this->advanced_mode['settings']['professional']	= $this->isProfessionalLicense();
+					$this->advanced_mode['settings']['enterprise'] 		= $this->isEnterpriseLicense();
+					$this->advanced_mode['settings']['developer'] 		= $this->isDeveloperLicense();
+					$this->advanced_mode['settings']['unlimited'] 		= $this->isUnlimitedLicense();
+				}
+			);
+		}
+		parent::setAdvancedMode($is,$what,$level);
 	}
 }

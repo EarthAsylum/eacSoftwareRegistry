@@ -2,7 +2,7 @@
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:             	[EarthAsylum Consulting](https://www.earthasylum.com)
 Stable tag:             1.6.0-RC2
-Last Updated:           08-Sep-2026
+Last Updated:           09-Sep-2026
 Requires at least:      5.8
 Tested up to:           7.1
 Requires EAC:           3.3
@@ -473,7 +473,7 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 == Changelog ==
 
-= Version 1.6.0 – September 8, 2026 =
+= Version 1.6.0 – September 9, 2026 =
 
 +   Compatible with WordPress 7.1.
 +	Updated for/requires eacDoojigger 3.3.
@@ -481,6 +481,7 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 	+	Removed 'Registration' link on plugins page.
 	+	Added 'Support' link on plugins page.
 	+	Added 'Sponsor' link on plugins page.
++	Enhanced licensing/advanced-mode.
 
 = Version 1.5.2 – July 20, 2026 =
 
