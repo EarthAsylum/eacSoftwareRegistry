@@ -1,14 +1,15 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
-Author:                 [EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.5.2
-Last Updated:           20-Jul-2026
+Author:             	[EarthAsylum Consulting](https://www.earthasylum.com)
+Stable tag:             1.6.0-RC2
+Last Updated:           08-Sep-2026
 Requires at least:      5.8
 Tested up to:           7.1
-Requires EAC:           3.1
+Requires EAC:           3.3
 Requires PHP:           8.1
-Contributors:           earthasylum@github,kevinburkholder@wordpress
+Contributors:       	EarthAsylum@github,KevinBurkholder@wordpress
 Donate link:            https://github.com/sponsors/EarthAsylum
+Support link:			https://github.com/EarthAsylum/eacSoftwareRegistry/issues
 License:                EarthAsylum Consulting Proprietary License - {eac}PLv1
 License URI:            https://swregistry.earthasylum.com/end-user-license-agreement/
 Tags:                   software registration, software registry, software license, license manager, registration API
@@ -20,21 +21,19 @@ GitHub URI:             https://github.com/EarthAsylum/eacSoftwareRegistry
 
 = Important Update =
 
-_Although this software may still be purchased on the
-[{eac}SoftwareRegistry web site][website]
-under the existing subscription plans, as of August 2025, you may
-[download the basic edition][download] for free (or with [sponsorship])
-available at this [GitHub Repository]._
+**As of August 2025, a free "basic edition" is available** on [GitHub][GitHub Repository], optionally supported via [GitHub Sponsorship][sponsorship].
 
-*The [Copyright](#copyright) and
-[End User License Agreement](https://swregistry.earthasylum.com/end-user-license-agreement/) still apply.*
+**Paid subscription plans are still sold** on the [product site][website] for those who want the full commercial offering.
 
-:package: [Download eacSoftwareRegistry.zip][Download]
+*The [Copyright](#copyright) and [End User License Agreement][EULA] still apply.*
+
+📦 [Download eacSoftwareRegistry.zip][Download]  - latest release, ready to install
 
 [website]:			https://swregistry.earthasylum.com/software-registration-server/
 [sponsorship]:		https://github.com/sponsors/EarthAsylum
-[download]:			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip "Download eacSoftwareRegistry.zip, latest release, ready to install"
+[download]:			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.zip
 [GitHub Repository]:https://github.com/EarthAsylum/eacSoftwareRegistry
+[EULA]:				https://swregistry.earthasylum.com/end-user-license-agreement/
 
 = Summary =
 
@@ -449,7 +448,7 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 
 == Upgrade Notice ==
 
-Requires {eac}Doojigger version 3.1+
+Requires {eac}Doojigger version 3.3+
 
 = 1.5 =
 
@@ -473,6 +472,15 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.6.0 – September 8, 2026 =
+
++   Compatible with WordPress 7.1.
++	Updated for/requires eacDoojigger 3.3.
++	Aesthetic/Nonstructural changes...
+	+	Removed 'Registration' link on plugins page.
+	+	Added 'Support' link on plugins page.
+	+	Added 'Sponsor' link on plugins page.
 
 = Version 1.5.2 – July 20, 2026 =
 

@@ -9,8 +9,8 @@ namespace EarthAsylumConsulting\Plugin;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.1129.1
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		26.0901.1
  */
 
 trait eacSoftwareRegistry_administration
@@ -116,11 +116,53 @@ trait eacSoftwareRegistry_administration
 			function($pluginLinks, $pluginFile, $pluginData)
 			{
 				return array_merge(
-					['documentation'=>$this->getDocumentationLink($pluginData)],
+					[
+						'documentation'	=> $this->getDocumentationLink(true,'/software-registration-server'),
+					],
+					(method_exists($this,'getSupportLink'))
+						? ['support'	=> $this->getSupportLink()] : [],
 					$pluginLinks
 				);
 			},20,3
 		);
+		// on plugin_row_meta filter, add 'Sponsor' link
+		add_filter( 'plugin_row_meta', function($pluginMeta, $pluginSlug, $pluginData, $status)
+			{
+				if ($pluginSlug == $this->PLUGIN_SLUG)
+				{
+					$pluginMeta['Sponsor'] =
+					'<a href="https://github.com/sponsors/EarthAsylum" target="_blank">'.
+					'<span class="dashicons dashicons-heart" style="color:#c00;font-size:13px;line-height:1.5"></span>Sponsor</a>';
+				}
+				return $pluginMeta;
+			},20,4
+		);
+
+
+	/*
+		if (method_exists($this,'getReinstallLink'))
+		{
+			// on plugin_auto_update_setting_html filter, add 'Reinstall' link
+			add_filter( 'plugin_auto_update_setting_html', function($pluginHtml, $pluginSlug, $pluginData)
+				{
+					if ($pluginSlug == $this->PLUGIN_SLUG)
+					{
+						$pluginHtml .= '<br/>'.$this->getReinstallLink();
+					}
+					return $pluginHtml;
+				},20,3
+			);
+			// on reinstall_plugin, trigger plugin reinstall
+			$this->add_action( 'reinstall_plugin', function($pluginSlug)
+				{
+					if ($pluginSlug == $this->PLUGIN_SLUG)
+					{
+						$this->reinstall_plugin_action($pluginSlug);
+					}
+				}
+			);
+		}
+	*/
 
 		//so we can upload our software packages
 		if (current_user_can('manage_options'))
