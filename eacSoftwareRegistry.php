@@ -8,7 +8,7 @@
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
- * @version		1.6.0-RC2
+ * @version		1.6.0
  *
  * @link		https://swregistry.earthasylum.com/
  * @link 		https://github.com/EarthAsylum/eacSoftwareRegistry

@@ -1,8 +1,8 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:             	[EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.6.0-RC2
-Last Updated:           09-Sep-2026
+Stable tag:             1.6.0
+Last Updated:           15-Sep-2026
 Requires at least:      5.8
 Tested up to:           7.1
 Requires EAC:           3.3
@@ -107,7 +107,8 @@ Both WordPress and non-WordPress projects are supported by the SDK.
 *   **{eac}SoftwareRegistry Software Taxonomy**
 
 The [{eac}SoftwareRegistry Software Taxonomy](https://swregistry.earthasylum.com/software-taxonomy/) extension
-is a simple plugin extension that allows you to set and override {eac}SoftwareRegistry options for specific software products. It both defines the software product as well as the server parameters used when that product is registered via your software registration api. Additionally, you may customize client emails and notifications as well as license-level restrictions. Version 2.0+ supports "self-hosted" plugins on Github providing plugin information and automated updates in WordPress built directly from the plugin `readme.txt` file and the Github repository.
+is a simple plugin extension that allows you to set and override {eac}SoftwareRegistry options for specific software products. It both defines the software product as well as the server parameters used when that product is registered via your software registration api. Additionally, you may customize client emails and notifications as well as license-level restrictions. Version 2.0+ supports [self-hosted plugins on Github](https://swregistry.earthasylum.com/software-registry-hooks/) providing plugin information and automated updates in WordPress built directly from the plugin `readme.txt` file and the Github repository.
++   [{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/)
 
 *   **{eac}SoftwareRegistry Custom Hooks**
 
@@ -441,6 +442,7 @@ When uninstalled, the plugin will delete custom tables, settings, and transient 
 
 +   [Implementing the Software Registry SDK](https://swregistry.earthasylum.com/software-registry-sdk/)
 +   [{eac}SoftwareRegistry Software Taxonomy](https://swregistry.earthasylum.com/software-taxonomy/)
++   [{eac}SoftwareRegistry GitHub Hosting](https://swregistry.earthasylum.com/github-hosting/)
 +   [{eac}SoftwareRegistry Custom Hooks](https://swregistry.earthasylum.com/software-registry-hooks/)
 +   [{eac}SoftwareRegistry WebHooks for WooCommerce](https://swregistry.earthasylum.com/webhooks-for-woocommerce/)
 +   [{eac}SoftwareRegistry Subscriptions for WooCommerce](https://swregistry.earthasylum.com/subscriptions-for-woocommerce/)
@@ -473,7 +475,7 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 == Changelog ==
 
-= Version 1.6.0 – September 9, 2026 =
+= Version 1.6.0 – September 15, 2026 =
 
 +   Compatible with WordPress 7.1.
 +	Updated for/requires eacDoojigger 3.3.
