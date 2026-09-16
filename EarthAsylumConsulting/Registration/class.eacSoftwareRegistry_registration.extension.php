@@ -7,7 +7,7 @@ namespace EarthAsylumConsulting\Extensions;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.EarthAsylum.com>
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.EarthAsylum.com>
  * @see 		https://eacDoojigger.earthasylum.com/phpdoc/
  * @uses 		\EarthAsylumConsulting\Traits\swRegistrationUI;
  */
@@ -24,7 +24,7 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 	/**
 	 * @var string extension version
 	 */
-	const VERSION	= '25.0802.1';
+	const VERSION	= '26.0916.1';
 
 	/**
 	 * @var ALIAS constant ($this->Registration->...)
@@ -48,7 +48,7 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 	 */
 	public function __construct($plugin)
 	{
-		parent::__construct($plugin, self::ALLOW_ALL);
+		parent::__construct($plugin, self::ALLOW_ALL | self::ALLOW_NON_PHP);
 
 		if ($this->is_admin())
 		{
