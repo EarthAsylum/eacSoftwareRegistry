@@ -8,7 +8,7 @@
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
- * @version		1.6.0
+ * @version		1.6.1
  *
  * @link		https://swregistry.earthasylum.com/
  * @link 		https://github.com/EarthAsylum/eacSoftwareRegistry
@@ -16,7 +16,7 @@
  * @wordpress-plugin
  * Plugin Name:			{eac}SoftwareRegistry
  * Description:			Software Registration Server - A feature-rich and easily customized software registration and licensing server for WordPress.
- * Version:				1.6.0
+ * Version:				1.6.1
  * Requires at least:	5.8
  * Tested up to: 		7.1
  * Requires PHP:		8.1
@@ -34,17 +34,15 @@
 
 namespace EarthAsylumConsulting
 {
-	if (!defined('EACDOOJIGGER_VERSION'))
+	if (! class_exists( 'EarthAsylumConsulting\eacDoojigger', false ) )
 	{
-		\add_action( 'admin_notices', function()
-			{
-				echo '<div class="notice notice-error is-dismissible">'.
-					 '<em>{eac}SoftwareRegistry</em> requires installation & activation of '.
-					 '<a href="https://eacdoojigger.earthasylum.com/eacdoojigger" target="_blank">'.
-					 '{eac}Doojigger</a>.</div>';
-			}
-		);
-		return;
+		require_once 'dependency.php';
+		return dependency::notice([
+			'plugin'	=>	[ '{eac}SoftwareRegistry' 	=> plugin_basename( __FILE__ ) ],
+			'requires'	=> 	[ '{eac}Doojigger' 			=> 'eacDoojigger/eacDoojigger.php' ],
+			'manifest'	=> 'https://eacdoojigger.earthasylum.com/software-updates/eacdoojigger.json',
+			'after'		=> '/wp-admin/admin.php?page=eacdoojigger-settings&tab=registration'
+		]);
 	}
 
 
