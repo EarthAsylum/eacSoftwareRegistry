@@ -41,7 +41,7 @@ namespace EarthAsylumConsulting
 			'plugin'	=>	[ '{eac}SoftwareRegistry' 	=> plugin_basename( __FILE__ ) ],
 			'requires'	=> 	[ '{eac}Doojigger' 			=> 'eacDoojigger/eacDoojigger.php' ],
 			'manifest'	=> 'https://eacdoojigger.earthasylum.com/software-updates/eacdoojigger.json',
-			'after'		=> '/wp-admin/admin.php?page=eacdoojigger-settings&tab=registration'
+			'after'		=> self_admin_url('/admin.php?page=eacdoojigger-settings&tab=registration')
 		]);
 	}
 
