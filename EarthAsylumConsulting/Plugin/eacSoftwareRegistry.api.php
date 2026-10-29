@@ -9,8 +9,8 @@ namespace EarthAsylumConsulting\Plugin;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		25.0726.1
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		26.1026.1
  */
 
 namespace EarthAsylumConsulting\Plugin;
@@ -822,7 +822,7 @@ trait eacSoftwareRegistry_api
 	 * @param 	array	$wpPost - existing registration post
 	 * @return 	array	request parameters
 	 */
-	public function validateRequest(array $request, array $defaults,  object $wpPost = null)
+	public function validateRequest(array $request, array $defaults,  ?object $wpPost = null)
 	{
 		// check product
 		if (isset($request['registry_product']))
@@ -1660,7 +1660,7 @@ trait eacSoftwareRegistry_api
 	 * @param 	string $source
 	 * @return 	string api_source
 	 */
-	public function setApiSource(string $source=null): string
+	public function setApiSource(?string $source=null): string
 	{
 		if ($source) $this->api_source = $source;
 		return $this->api_source;
@@ -1673,7 +1673,7 @@ trait eacSoftwareRegistry_api
 	 * @param 	string $action
 	 * @return 	string api_action
 	 */
-	public function setApiAction(string $action=null): string
+	public function setApiAction(?string $action=null): string
 	{
 		if ($action) $this->api_action = $action;
 		return $this->api_action;
@@ -1686,7 +1686,7 @@ trait eacSoftwareRegistry_api
 	 * @param 	string $action
 	 * @return 	string action past-tense
 	 */
-	public function getApiAction(string $action=null): string
+	public function getApiAction(?string $action=null): string
 	{
 		if (!$action) $action = $this->api_action;
 		switch ($action)
@@ -1724,7 +1724,7 @@ trait eacSoftwareRegistry_api
 	 *
 	 * @return object WP_Error
 	 */
-	private function rest_error(int $status, string $message=null, string $error=null)
+	private function rest_error(int $status, ?string $message=null, ?string $error=null)
 	{
 		if (empty($message)) {
 			$message = strtolower(get_status_header_desc($status));
