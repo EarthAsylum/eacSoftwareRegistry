@@ -7,8 +7,8 @@
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.1125.1
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		26.1120.1
  */
 
 defined( 'ABSPATH' ) or exit;
@@ -32,6 +32,8 @@ defined( 'ABSPATH' ) or exit;
  * 		$headers 		- array of wp_mail headers (from,to,subject,content-type)
  */
 
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
+// phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet
 ?>
 
 <!DOCTYPE html>

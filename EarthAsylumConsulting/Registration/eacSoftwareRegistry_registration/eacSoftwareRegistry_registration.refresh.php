@@ -8,9 +8,11 @@
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.EarthAsylum.com>
- * @version		25.0725.1
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.EarthAsylum.com>
+ * @version		26.1119.1
  */
+
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedClassFound
 
 include "eacSoftwareRegistry_registration.includes.php";
 
@@ -29,4 +31,7 @@ class eacSoftwareRegistryRegistrationRefresh implements \EarthAsylumConsulting\I
 		return $this->refreshRegistration($registrationKey);
 	}
 }
-return new eacSoftwareRegistryRegistrationRefresh($argv[0] ?: null);
+return new eacSoftwareRegistryRegistrationRefresh($argv[0] ?? null);
+
+// phpcs:ignore missing_direct_file_access_protection
+defined( 'ABSPATH' ) or exit;

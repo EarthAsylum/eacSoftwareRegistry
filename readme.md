@@ -8,9 +8,9 @@
 
 Plugin URI:             https://swregistry.earthasylum.com/  
 Author:             	[EarthAsylum Consulting](https://www.earthasylum.com)  
-Stable tag:             1.6.2  
-Last Updated:           28-Oct-2026  
-Requires at least:      5.8  
+Stable tag:             1.6.3  
+Last Updated:           20-Nov-2026  
+Requires at least:      5.9  
 Tested up to:           7.1  
 Requires EAC:           3.3  
 Requires PHP:           8.2  

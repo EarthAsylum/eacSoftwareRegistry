@@ -10,10 +10,8 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
- * @version		26.1026.1
+ * @version		26.1120.1
  */
-
-namespace EarthAsylumConsulting\Plugin;
 
 trait eacSoftwareRegistry_api
 {
@@ -313,7 +311,7 @@ trait eacSoftwareRegistry_api
 			if (! is_wp_error( $this->getRegistrationPostByEmail($request['registry_email'],false,
 					[
 						'registry_product'	=> $request['registry_product'],
-						'registry_domain'	=> preg_replace('/^www\.(.+\.)/i', '$1',parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST))
+						'registry_domain'	=> preg_replace('/^www\.(.+\.)/i', '$1',wp_parse_url($this->varServer('HTTP_REFERER'),PHP_URL_HOST))
 					]
 				))
 			) {
@@ -1000,7 +998,7 @@ trait eacSoftwareRegistry_api
 			$transid = explode('|',$request['registry_transid']);
 			if (count($transid) == 1 && isset($_SERVER['HTTP_REFERER']))
 			{
-				$domain = preg_replace('/^www\.(.+\.)/i', '$1', parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST));
+				$domain = preg_replace('/^www\.(.+\.)/i', '$1', wp_parse_url($this->varServer('HTTP_REFERER'),PHP_URL_HOST));
 				$request['registry_transid'] = "{$transid}|{$domain}";
 			}
 		}
@@ -1297,25 +1295,25 @@ trait eacSoftwareRegistry_api
 		if (isset($_SERVER['HTTP_REFERER']))
 		{
 			// verify host domain name (sans www.)
-			//$domain = str_replace('www.','',parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST));
-			$domain = preg_replace('/^www\.(.+\.)/i', '$1', parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST));
+			$domain = preg_replace('/^www\.(.+\.)/i', '$1', wp_parse_url($this->varServer('HTTP_REFERER'),PHP_URL_HOST));
 
 			if (isset($meta['registry_domains']) && ! in_array($domain,(array)$meta['registry_domains']))
 			{
 				$meta['registry_status'] 	= 'invalid';
 				$meta['registry_valid']		=  false;
-				$error = sprintf(__('Domain mismatch; %s not accepted','softwareregistry'),$domain);
+				/* translators: 1: client domain name. */
+				$error = sprintf(__('Domain mismatch; %1$s not accepted','eacSoftwareRegistry'),$domain);
 			}
 			// verify url site name (sans scheme)
 			else if (isset($meta['registry_sites']) && !empty($meta['registry_sites']))
 			{
-				$scheme = parse_url($_SERVER['HTTP_REFERER'],PHP_URL_SCHEME);
-				$domain = str_replace($scheme,'',$_SERVER['HTTP_REFERER']);
+				$scheme = wp_parse_url($this->varServer('HTTP_REFERER'),PHP_URL_SCHEME);
+				$domain = str_replace($scheme,'',$this->varServer('HTTP_REFERER'));
 
 				$valid = false;
 				foreach ($meta['registry_sites'] as $site)
 				{
-					$scheme = parse_url($site,PHP_URL_SCHEME);
+					$scheme = wp_parse_url($site,PHP_URL_SCHEME);
 					$site = str_replace($scheme,'',$site);
 					if (strpos($domain,$site) !== false) {
 						$valid = true;
@@ -1325,7 +1323,7 @@ trait eacSoftwareRegistry_api
 				if (!$valid) {
 					$meta['registry_status'] 	= 'invalid';
 					$meta['registry_valid']		=  false;
-					$error = __('Site mismatch; referring URL not accepted','softwareregistry');
+					$error = __('Site mismatch; referring URL not accepted','eacSoftwareRegistry');
 				}
 			}
 		}
@@ -1500,7 +1498,8 @@ trait eacSoftwareRegistry_api
 		$product = '<em>'.$meta['registry_title'].'</em>';
 		if ($post->post_status != 'publish') // not active registration
 		{
-			$error = sprintf(__('Your %s registration is currently %s.','softwareregistry'),$product,strtolower($meta['registry_status']));
+			/* translators: 1: product name. 2: registration status */
+			$error = sprintf(__('Your %1$s registration is currently %2$s.','eacSoftwareRegistry'),$product,strtolower($meta['registry_status']));
 		}
 		else
 		{
@@ -1525,11 +1524,14 @@ trait eacSoftwareRegistry_api
 				$date = $update->format("d-M-Y");
 				$time = $update->format("g:ia (T)");
 				if ($days < 1) {
-					$error 		= sprintf(__('Your %s registration is expected to %s at %s.','softwareregistry'),$product,$action,$time);
+					/* translators: 1: product name. 2: expected status. 3: time. */
+					$error 		= sprintf(__('Your %1$s registration is expected to %2$s at %3$s.','eacSoftwareRegistry'),$product,$action,$time);
 				} else if ($days < 8) {
-					$warning 	= sprintf(__('Your %s registration is expected to %s at %s on %s.','softwareregistry'),$product,$action,$time,$date);
+					/* translators: 1: product name. 2: expected status. 3: time. 4: date */
+					$warning 	= sprintf(__('Your %1$s registration is expected to %2$s at %3$s on %4$s.','eacSoftwareRegistry'),$product,$action,$time,$date);
 				} else if ($days < 15) {
-					$info 		= sprintf(__('Your %s registration is expected to %s at %s on %s.','softwareregistry'),$product,$action,$time,$date);
+					/* translators: 1: product name. 2: expected status. 3: time. 4: date */
+					$info 		= sprintf(__('Your %1$s registration is expected to %2$s at %3$s on %4$s.','eacSoftwareRegistry'),$product,$action,$time,$date);
 				}
 			}
 		}
@@ -1599,29 +1601,33 @@ trait eacSoftwareRegistry_api
 	 */
 	private function getRegistrationPost(string $postKey, $postValue, array $metaQuery = [], bool $includeMeta = false)
 	{
+		global $wpdb;
+
 		$join = $where = [];
 
 		foreach ($metaQuery as $key => $value)
 		{
+			$key 	= sanitize_key($key);
+			$value 	= sanitize_text_field($value);
 			$join[] =
-				"INNER JOIN ".$this->wpdb->postmeta." AS meta_{$key} ON ( posts.ID = meta_{$key}.post_id )\n" ;
+				"INNER JOIN ".$wpdb->postmeta." AS meta_{$key} ON ( posts.ID = meta_{$key}.post_id )\n" ;
 			$where[] =
 				"meta_{$key}.meta_key = '_{$key}' AND meta_{$key}.meta_value LIKE '%{$value}%'\n";
-
 		}
 		$join 	= (!empty($join)) ? ' '.implode(' ',$join) : '';
 		$where 	= (!empty($where)) ? ' AND '.implode(' AND ',$where) : '';
 
-		$sql =
-			"SELECT * FROM ".$this->wpdb->posts." AS posts\n" .
-			$join .
-			" WHERE posts.post_type = '".self::CUSTOM_POST_TYPE."'\n" .
-			" AND posts.{$postKey} = '{$postValue}'\n" .
-			" AND posts.post_status NOT IN ('inherit','auto-draft')\n" .
-			$where .
-			" ORDER BY posts.post_modified DESC";
-
-		$posts = $this->wpdb->get_results( $sql, OBJECT_K );
+		$sql = $wpdb->prepare(
+				"SELECT * FROM {$wpdb->posts} AS posts\n" .
+				$join .
+				" WHERE posts.post_type = %s\n" .
+				" AND posts.%2s = %s\n" .			// (eg, %1$s, %5s) will not have quotes added by this function
+				" AND posts.post_status NOT IN ('inherit','auto-draft')\n" .
+				$where .
+				" ORDER BY posts.post_modified DESC",
+			self::CUSTOM_POST_TYPE, $postKey, $postValue
+		);
+		$posts = $wpdb->get_results($sql, OBJECT_K );
 
 		//$this->logDebug([$sql,$posts],__METHOD__.' ('.current_action().')');
 
@@ -1735,7 +1741,7 @@ trait eacSoftwareRegistry_api
 		$this->logError('Status: '.$status.' '.$message,__METHOD__);
 		return new \wp_error(
 			(string)$status,
-			__(get_status_header_desc($status),'eacSoftwareRegistry'),
+			get_status_header_desc($status),
 			['code'=>(string)$status,'message'=>__($message,'eacSoftwareRegistry')]
 		);
 	}

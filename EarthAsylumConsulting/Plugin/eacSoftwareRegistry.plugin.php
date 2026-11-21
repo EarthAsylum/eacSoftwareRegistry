@@ -10,8 +10,10 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
- * @version		26.0909.1
+ * @version		26.1120.1
  */
+
+if (! defined( 'ABSPATH' )) exit;
 
 require "eacSoftwareRegistry.trait.php";
 require "eacSoftwareRegistry.api.php";
@@ -338,7 +340,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 		foreach( $postmeta as $key => $value)
 		{
 			$key = ltrim($key,'_');
-			if (substr($key,0,9) == 'registry_') {
+			if (str_starts_with($key,'registry_')) {
 				$meta[$key] = $value;
 			}
 		}
@@ -445,7 +447,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 		$request = array();
 
 		// updating custom fields through wp admin quick links
-		if (isset($_GET['action']) && isset($_GET['_wpnonce']))
+		if (isset($_GET['action']) && isset($_GET['_wpnonce']) /*&& wp_verify_nonce($_GET['_wpnonce'])*/)
 		{
 			if ($_GET['action'] == 'trash')
 			{
@@ -463,7 +465,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 		}
 
 		// updating custom fields through wp admin edit form
-		if ( !empty($_POST) && isset($_POST['_wpnonce']) )
+		if ( !empty($_POST) && isset($_POST['_wpnonce']) /*&& wp_verify_nonce($_POST['_wpnonce'])*/ )
 		{
 			if (isset($_POST['_email_to_client'])) // 'email to client' button clicked
 			{
@@ -473,7 +475,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			foreach ($_POST as $key => $newValue)
 			{
 				$key = ltrim($key,'_');
-				if (substr($key,0,9) == 'registry_')
+				if (str_starts_with($key,'registry_'))
 				{
 					if (isset(self::REGISTRY_DEFAULTS[$key]) && is_array(self::REGISTRY_DEFAULTS[$key])) {
 						$newValue = $this->explode_with_keys("\n",trim($newValue));
@@ -628,11 +630,11 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			$now 		= $this->getDateTimeInZone();
 
 			$source 	= (isset($_SERVER['HTTP_REFERER']))
-						? "\n".__('Requested from','softwareregistry').': '.parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST)
+						? "\n".__('Requested from','eacSoftwareRegistry').': '.wp_parse_url($this->varServer('HTTP_REFERER'),PHP_URL_HOST)
 						: "";
 
 			$emailSent 	= ($this->emailToClient())
-						? "\n".__('Email notification was sent to client','softwareregistry')
+						? "\n".__('Email notification was sent to client','eacSoftwareRegistry')
 						: "";
 
 			$context	= $this->getApiAction($emailAction);
@@ -640,7 +642,8 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			// add a note to the registration
 			$this->add_registration_note($post,
 				sprintf(
-					__("Registration {$context} via {$this->api_source} at %s on %s.%s%s", 'softwareregistry'),
+					__('Registration %1$s via %2$s at %3$s on %4$s.%5$s%6$s', 'eacSoftwareRegistry'),
+						$context, $this->api_source,
 						$now->format($this->time_format), $now->format($this->date_format.' (T)'), $source, $emailSent
 				)
 			);
@@ -975,7 +978,7 @@ class eacSoftwareRegistry extends \EarthAsylumConsulting\abstract_context
 			$headers 	= $this->apply_filters('admin_email_headers', [
 				'from'			=> get_bloginfo('name').' <'.get_bloginfo('admin_email').'>',
 				'to'			=> $registrar['registrar_name'].' <'.$email.'>',
-				'subject'		=> '['.get_bloginfo('name')."] Registration {$context} on ".$_SERVER['HTTP_HOST'],
+				'subject'		=> '['.get_bloginfo('name')."] Registration {$context} on ".$this->varServer('HTTP_HOST'),
 				'Content-type'	=> 'text/html'
 			], $meta, $post);
 			if (!$headers) return;

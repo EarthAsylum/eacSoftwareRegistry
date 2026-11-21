@@ -7,8 +7,8 @@
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0415.1
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		26.1120.1
  */
 
 defined( 'ABSPATH' ) or exit;
@@ -20,6 +20,7 @@ defined( 'ABSPATH' ) or exit;
  * 		$context 		- 'client'|'admin'
  *
  */
+// phpcs:disable WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 
 // Default colors, override in Appearance->Customize->Additonal CSS...
 ?>
@@ -32,10 +33,12 @@ defined( 'ABSPATH' ) or exit;
 <?php
 
 // get WooCommerce or default colors
-$bg        = get_option( 'woocommerce_email_background_color', 		'var(--eac-email-bg)' );
-$body      = get_option( 'woocommerce_email_body_background_color', 'var(--eac-email-body)' );
-$base      = get_option( 'woocommerce_email_base_color', 			'var(--eac-email-base)' );
-$text      = get_option( 'woocommerce_email_text_color', 			'var(--eac-email-text)' );
+$bg        = esc_attr(get_option( 'woocommerce_email_background_color', 	'var(--eac-email-bg)' ));
+$body      = esc_attr(get_option( 'woocommerce_email_body_background_color','var(--eac-email-body)' ));
+$base      = esc_attr(get_option( 'woocommerce_email_base_color', 			'var(--eac-email-base)' ));
+$text      = esc_attr(get_option( 'woocommerce_email_text_color', 			'var(--eac-email-text)' ));
+
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 
 ?>
 

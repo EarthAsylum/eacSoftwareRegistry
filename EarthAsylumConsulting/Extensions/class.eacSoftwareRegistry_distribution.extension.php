@@ -7,16 +7,17 @@ namespace EarthAsylumConsulting\Extensions;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2025 EarthAsylum Consulting <www.earthasylum.com>
- * @version		1.x
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
  */
+
+if (! defined( 'ABSPATH' )) exit;
 
 class SoftwareRegistry_distribution extends \EarthAsylumConsulting\abstract_extension
 {
 	/**
 	 * @var string extension version
 	 */
-	const VERSION		= '25.0331.1';
+	const VERSION		= '26.1120.1';
 
 	/**
 	 * @var string|array|bool to set (or disable) default group display/switch

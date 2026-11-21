@@ -1,9 +1,9 @@
 === {eac}SoftwareRegistry Software Registration Server ===
 Plugin URI:             https://swregistry.earthasylum.com/
 Author:             	[EarthAsylum Consulting](https://www.earthasylum.com)
-Stable tag:             1.6.2
-Last Updated:           28-Oct-2026
-Requires at least:      5.8
+Stable tag:             1.6.3
+Last Updated:           20-Nov-2026
+Requires at least:      5.9
 Tested up to:           7.1
 Requires EAC:           3.3
 Requires PHP:           8.2
@@ -474,6 +474,12 @@ See: [EarthAsylum Consulting EULA](https://swregistry.earthasylum.com/end-user-l
 
 
 == Changelog ==
+
+= Version 1.6.3 – November 20, 2026 =
+
++	Addressed concerns generated from WordPress Plugin Checker.
++	Updated WordPress Requires at least to 5.9.
++	Updated Requires PHP to 8.2.
 
 = Version 1.6.2 – October 28, 2026 =
 

@@ -8,7 +8,7 @@
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
- * @version		1.6.1
+ * @version		1.6.3
  *
  * @link		https://swregistry.earthasylum.com/
  * @link 		https://github.com/EarthAsylum/eacSoftwareRegistry
@@ -16,9 +16,8 @@
  * @wordpress-plugin
  * Plugin Name:			{eac}SoftwareRegistry
  * Description:			Software Registration Server - A feature-rich and easily customized software registration and licensing server for WordPress.
- * Version:				1.6.2
- * Requires at least:	5.8
- * Tested up to: 		7.1
+ * Version:				1.6.3
+ * Requires at least:	5.9
  * Requires PHP:		8.2
  * Plugin URI:			https://swregistry.earthasylum.com/
  * Update URI: 			https://swregistry.earthasylum.com/software-updates/eacsoftwareregistry.json
@@ -28,12 +27,13 @@
  * License URI:			https://swregistry.earthasylum.com/end-user-license-agreement/
  * Text Domain:			eacSoftwareRegistry
  * Domain Path:			/languages
- * Network: 			false
  */
 
 
 namespace EarthAsylumConsulting
 {
+	defined( 'ABSPATH' ) or exit;
+
 	if (! class_exists( 'EarthAsylumConsulting\eacDoojigger', false ) )
 	{
 		require_once 'dependency.php';
@@ -65,7 +65,7 @@ namespace EarthAsylumConsulting
 				'PluginFile'		=> __FILE__,
 				'NameSpace'			=> __NAMESPACE__,
 				'PluginClass'		=> __NAMESPACE__.'\\Plugin\\eacSoftwareRegistry',
-				'RequiresWP'		=> '5.8',			// WordPress
+				'RequiresWP'		=> '5.9',			// WordPress
 				'RequiresPHP'		=> '8.2',			// PHP
 				'RequiresEAC'		=> '3.3',			// eacDoojigger
 				'NetworkActivate'	=>	false,			// require (or forbid) network activation

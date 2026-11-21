@@ -7,10 +7,10 @@ namespace EarthAsylumConsulting\Extensions;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2023 American Telecast Products
- * @version		1.x
+ * @copyright	Copyright (c) 2026 American Telecast Products
  */
 
+if (! defined( 'ABSPATH' )) exit;
 
 if (class_exists('\EarthAsylumConsulting\Extensions\admin_tools_extension') )
 {

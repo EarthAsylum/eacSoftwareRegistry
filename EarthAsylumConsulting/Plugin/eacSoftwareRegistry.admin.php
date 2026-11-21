@@ -10,7 +10,7 @@ namespace EarthAsylumConsulting\Plugin;
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
  * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
- * @version		26.0901.1
+ * @version		26.1120.1
  */
 
 trait eacSoftwareRegistry_administration
@@ -215,7 +215,7 @@ trait eacSoftwareRegistry_administration
 		<?php
 		$script = ob_get_clean();
 		$scriptId = self::CUSTOM_POST_TYPE.'-script';
-		wp_register_script( $scriptId, false );
+		wp_register_script( $scriptId, false, [], 1.0, true);
 		wp_enqueue_script( $scriptId );
 		wp_add_inline_script( $scriptId, $this->minifyString($script) );
 	}
@@ -318,23 +318,24 @@ trait eacSoftwareRegistry_administration
 	 */
 	public function custom_post_column_value($column, $post_id)
 	{
+		// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped
 		switch ($column)
 		{
 			case 'registry_product':
-				$value = get_post_meta($post_id, "_registry_license", true);
-				echo '<span title="'.get_post_meta($post_id, "_registry_description", true).'">'.
-					get_post_meta($post_id, "_{$column}", true).' ('.
+				$value = esc_attr(get_post_meta($post_id, "_registry_license", true));
+				echo '<span title="'.esc_attr(get_post_meta($post_id, "_registry_description", true)).'">'.
+					esc_attr(get_post_meta($post_id, "_{$column}", true)).' ('.
 					str_replace(' ','&nbsp;',(array_search($value,$this->REGISTRY_LICENSE_LEVEL) ?: $value)).')'.
 					'</span>';
 				break;
 			case 'registry_email':
-				$excerpt = get_post($post_id)->post_excerpt;
-				echo "<span title='{$excerpt}'>".get_post_meta($post_id, "_{$column}", true);
+				$excerpt = esc_html(get_post($post_id)->post_excerpt);
+				echo "<span title='{$excerpt}'>".esc_attr(get_post_meta($post_id, "_{$column}", true));
 				$value = get_post_meta($post_id, "_registry_company", true) ?: get_post_meta($post_id, "_registry_name", true);
-				echo ' ('.str_replace(' ','&nbsp;',$value).')</span>';
+				echo ' ('.str_replace(' ','&nbsp;',esc_attr($value)).')</span>';
 				break;
 			case 'registry_transid':
-				$value = get_post_meta($post_id, "_{$column}", true);
+				$value = esc_attr(get_post_meta($post_id, "_{$column}", true));
 				$short  = current(explode('|',$value));
 				echo "<span title='".str_replace("|","\n",$value)."'>{$short}</span>";
 				break;
@@ -348,16 +349,17 @@ trait eacSoftwareRegistry_administration
 				}
 				break;
 			case 'registry_effective':
-				echo $this->getDateTimeInZone( get_post_meta($post_id, "_{$column}", true) )->format('d-M-Y');
+				echo $this->getDateTimeInZone( esc_attr(get_post_meta($post_id, "_{$column}", true)) )->format('d-M-Y');
 				break;
 			case 'registry_expires':
-				$next = get_post_meta($post_id, "_registry_nextpay", true);
+				$next = esc_attr(get_post_meta($post_id, "_registry_nextpay", true));
 				$next = ($next) ? 'Next Payment: '.$this->getDateTimeInZone($next)->format('d-M-Y') : '';
-				echo "<span title='{$next}'>".$this->getDateTimeInZone( get_post_meta($post_id, "_{$column}", true) )->format('d-M-Y')."</span>";
+				echo "<span title='{$next}'>".$this->getDateTimeInZone( esc_attr(get_post_meta($post_id, "_{$column}", true)) )->format('d-M-Y')."</span>";
 				break;
 			default:
-				echo get_post_meta($post_id, "_{$column}", true);
+				echo esc_attr(get_post_meta($post_id, "_{$column}", true));
 		}
+		// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 
@@ -496,7 +498,7 @@ trait eacSoftwareRegistry_administration
 			],
 		);
 
-		echo "<div class='settings-grid-container' style='grid-template-columns: 8em auto;'>\n";
+		echo "<div class='settings-grid-container' style='grid-template-columns: 7.5em auto;'>\n";
 		$this->add_metabox_fields($fields,$post,12);
 		echo "</div>";
   	}
@@ -532,7 +534,7 @@ trait eacSoftwareRegistry_administration
 			],
 		);
 
-		echo "<div class='settings-grid-container' style='grid-template-columns: 8em auto;'>\n";
+		echo "<div class='settings-grid-container' style='grid-template-columns: 7.5em auto;'>\n";
 		$this->add_metabox_fields($fields,$post,12);
 		echo "</div>";
   	}
@@ -668,6 +670,7 @@ trait eacSoftwareRegistry_administration
 		}
 
 		echo "<div class='settings-grid-container' style='grid-template-columns: 30% 70%;'>\n";
+		//wp_nonce_field(self::CUSTOM_POST_TYPE, self::CUSTOM_POST_TYPE.'_nonce', false);
 		$this->add_metabox_fields($fields,$post,50);
 		echo "</div>";
   	}
@@ -720,6 +723,7 @@ trait eacSoftwareRegistry_administration
 
 		//	$fieldMeta['tooltip'] = false; // don't allow auto info-> tooltip
 			$this->html_input_help('', $key, $fieldMeta);
+			// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 			echo $this->html_input_block("_{$key}", $fieldMeta, $fieldValue, $maxWidth);
 		}
   	}

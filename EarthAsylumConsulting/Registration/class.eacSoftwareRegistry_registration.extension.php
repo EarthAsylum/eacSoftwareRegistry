@@ -12,6 +12,8 @@ namespace EarthAsylumConsulting\Extensions;
  * @uses 		\EarthAsylumConsulting\Traits\swRegistrationUI;
  */
 
+if (! defined( 'ABSPATH' )) exit;
+
 include "eacSoftwareRegistry_registration/eacSoftwareRegistry_registration.includes.php";
 
 class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_extension
@@ -24,7 +26,7 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 	/**
 	 * @var string extension version
 	 */
-	const VERSION	= '26.0916.1';
+	const VERSION	= '26.1120.1';
 
 	/**
 	 * @var ALIAS constant ($this->Registration->...)
@@ -111,15 +113,16 @@ class eacSoftwareRegistry_registration extends \EarthAsylumConsulting\abstract_e
 		// unlimited
 		if (empty($post_limit)) return $postValues;
 
-		$sql =
-			"SELECT count(*) FROM ".$wpdb->posts." AS posts" .
-			" WHERE posts.post_type = '".$this->plugin::CUSTOM_POST_TYPE."'" .
-			" AND posts.post_status = 'publish'";
-
-		$post_count = intval($wpdb->get_var( $sql ));
+		$post_count = $wpdb->get_var( $wpdb->prepare(
+				"SELECT count(*) FROM %s AS posts" .
+				" WHERE posts.post_type = %s" .
+				" AND posts.post_status = 'publish'",
+			$wpdb->posts,
+			$this->plugin::CUSTOM_POST_TYPE
+		));
 
 		// within limit
-		if ($post_count < $post_limit) return $postValues;
+		if ((int)$post_count < $post_limit) return $postValues;
 
 		// limit exceeded
 		return new \wp_error('license_count_exceeded',__('license count exceeded','eacSoftwareRegistry'));

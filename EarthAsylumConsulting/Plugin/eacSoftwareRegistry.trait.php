@@ -9,9 +9,11 @@ namespace EarthAsylumConsulting\Plugin;
  * @category	WordPress Plugin
  * @package		{eac}SoftwareRegistry
  * @author		Kevin Burkholder <KBurkholder@EarthAsylum.com>
- * @copyright	Copyright (c) 2024 EarthAsylum Consulting <www.earthasylum.com>
- * @version		24.0414.1
+ * @copyright	Copyright (c) 2026 EarthAsylum Consulting <www.earthasylum.com>
+ * @version		26.1120.1
  */
+
+if (! defined( 'ABSPATH' )) exit;
 
 if ( ! \EarthAsylumConsulting\is_admin_request() )
 {
